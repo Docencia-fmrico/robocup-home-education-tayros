@@ -1,0 +1,10 @@
+<launch>
+
+<!--<include file="$(find navigation)/launch/navigation.launch"/>-->
+<!--<include file="$(find taynav)/launch/navigation.launch"/>-->
+
+<node pkg="tayjarvis" type="suitcases_loader" name="suitcases_loader"> 
+    <rosparam command="load" file="$(find tayjarvis)/param/coordinates.yaml"/>
+</node>
+
+</launch>

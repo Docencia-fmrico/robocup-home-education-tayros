@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+  <name>taynav</name>
+  <version>0.0.0</version>
+  <description>Paquete de introducción a navegación</description>
+
+  <maintainer email="fmrico@gmail.com">paco</maintainer>
+  <license>GPLv3</license>
+  <url type="website">http://www.urjc.es/estudios/titulos-propios/1701-curso-superior-universitario-en-programacion-de-robots-con-ros</url>
+
+  <author email="fmrico@gmail.com">Francisco Martín Rico</author> 
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>pcl_ros</build_depend>
+  <build_depend>nav_core</build_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>pcl_ros</run_depend>
+  <run_depend>nav_core</run_depend>
+  
+
+
+</package>
