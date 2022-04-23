@@ -43,10 +43,7 @@ class Recognize : public BT::ActionNodeBase
 
   private: 
 
-    std::string sentences_[4] = {"Ten huevos a mirarme a los ojos", 
-                "Eso es mira hacia otro lado cuando te hablo",
-                "Si, si por ese otro lado te puedes ir",
-                "Ahora me das la espalda puto????" };
+    std::string sentences_[4] = {"Frase1", "Frase2", "Frase3", "Frase4"};
 
     ros::NodeHandle nh_;
     ros::Publisher pub_;

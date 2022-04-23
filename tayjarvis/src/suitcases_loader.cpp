@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(10);
 
-  int state = GOING_HOME;
+  int state = RECOGNIZE;
   bool finish = false;
 
   /* Bt sequence */
