@@ -1,0 +1,11 @@
+ <root main_tree_to_execute = "FollowTree" >
+     <BehaviorTree ID="FollowTree">
+
+        <ReactiveSequence name="root_sequence">
+            <Set_goal name="set_goal" pos="{goal}"/>
+            <Move name="goHome" pos="{goal}"/> 
+            <Get_mate_data name="Get_mate_data" data="{Description}"/>
+        </ReactiveSequence>
+
+     </BehaviorTree>
+ </root>
