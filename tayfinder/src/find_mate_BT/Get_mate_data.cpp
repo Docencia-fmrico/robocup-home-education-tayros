@@ -16,7 +16,7 @@ Get_mate_data::Get_mate_data(const std::string& name,  const BT::NodeConfigurati
 void
 Get_mate_data::halt()
 {
-  ROS_INFO("Get_mate_data halt");
+
 }
 
 BT::NodeStatus
@@ -24,7 +24,7 @@ Get_mate_data::tick()
 {
   setOutput<int>("data", 60);
   ROS_INFO("\n Im getting your bank account\n");
- // sleep(2);
+  sleep(5);
   return BT::NodeStatus::SUCCESS;
 }  // namespace find_mate
 

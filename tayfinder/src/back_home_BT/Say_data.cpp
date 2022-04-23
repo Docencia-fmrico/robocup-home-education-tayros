@@ -16,14 +16,13 @@ Say_data::Say_data(const std::string& name,  const BT::NodeConfiguration & confi
 void
 Say_data::halt()
 {
-  ROS_INFO("Say_data halt");
 }
 
 BT::NodeStatus
 Say_data::tick()
 {
   data_ = getInput<int>("data").value();
-  ROS_INFO("Compradas %d propiedades en Puzela", data_);
+  ROS_INFO("Números de atras de la tarjeta bancaria: %d", data_);
 
   return BT::NodeStatus::SUCCESS;
 }  // namespace Back_home

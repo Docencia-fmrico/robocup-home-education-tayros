@@ -35,7 +35,6 @@ Move::Move(
 void
 Move::on_halt()
 {
-  ROS_INFO("Move halt");
 }
 
 void

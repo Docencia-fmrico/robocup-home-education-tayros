@@ -42,9 +42,10 @@ int main(int argc, char **argv)
   BT::SharedLibrary loader;
 
   factory.registerFromPlugin(loader.getOSName("BT_move_node_finder"));
-  factory.registerFromPlugin(loader.getOSName("BT_set_goal_finder"));
+  factory.registerFromPlugin(loader.getOSName("BT_is_any_mate_finder"));
   factory.registerFromPlugin(loader.getOSName("BT_get_mate_data_finder"));
   factory.registerFromPlugin(loader.getOSName("BT_say_data_finder"));
+  factory.registerFromPlugin(loader.getOSName("BT_bump_go_finder"));
 
   std::string pkgpath = ros::package::getPath("tayfinder");
   std::string find_mate_path = pkgpath + "/behavior_trees_xml/find_mate.xml";
@@ -92,7 +93,7 @@ int main(int argc, char **argv)
     case INFORM_REFEREE:
      if (inform_referee.rootNode()->executeTick() == BT::NodeStatus::SUCCESS)
       {
-        if (++counter == 3)
+        if (++counter == num_persons)
         {
           finish = true;
         }

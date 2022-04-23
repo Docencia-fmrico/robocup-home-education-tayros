@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FIND_MATE_BT_SET_GOAL_H
-#define FIND_MATE_BT_SET_GOAL_H
+#ifndef FIND_MATE_BT_BUMP_GO_H
+#define FIND_MATE_BT_BUMP_GO_H
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "std_msgs/Int32.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include <move_base_msgs/MoveBaseAction.h>
 
@@ -26,10 +27,10 @@
 namespace find_mate
 {
 
-class SetGoal : public BT::ActionNodeBase
+class Bump_go : public BT::ActionNodeBase
 {
   public:
-    explicit SetGoal(const std::string& name, const BT::NodeConfiguration& config);
+    explicit Bump_go(const std::string& name, const BT::NodeConfiguration& config);
 
     void halt() override;
 
@@ -37,13 +38,15 @@ class SetGoal : public BT::ActionNodeBase
 
     static BT::PortsList providedPorts()
     {
-      return { BT::OutputPort<move_base_msgs::MoveBaseGoal>("pos")};
+      return {};
     }
 
   private:
     ros::NodeHandle nh_;
+    ros::Publisher mov_pub_;
+    std_msgs::Int32 move_;
 };
 
 }  // namespace find_mate
 
-#endif  // FIND_MATE_H_SET_GOAL_H
+#endif  // FIND_MATE_BT_BUMP_GO_H

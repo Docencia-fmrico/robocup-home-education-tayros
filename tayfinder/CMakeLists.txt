@@ -33,15 +33,18 @@ include_directories(
   ${ZMQ_INCLUDE_DIRS}
 )
 
-add_library(BT_set_goal_finder SHARED src/find_mate_BT/Set_goal.cpp)
+add_library(BT_bump_go_finder SHARED src/find_mate_BT/Bump_go.cpp)
 add_library(BT_get_mate_data_finder SHARED src/find_mate_BT/Get_mate_data.cpp)
+add_library(BT_is_any_mate_finder SHARED src/find_mate_BT/Is_any_mate.cpp)
+
 add_library(BT_move_node_finder SHARED src/back_home_BT/Move.cpp)
 add_library(BT_say_data_finder SHARED src/back_home_BT/Say_data.cpp)
 
 list(APPEND plugin_libs
   BT_move_node_finder
   BT_say_data_finder
-  BT_set_goal_finder
+  BT_bump_go_finder
+  BT_is_any_mate_finder
   BT_get_mate_data_finder
 )
 
