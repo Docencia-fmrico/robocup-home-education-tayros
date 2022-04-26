@@ -13,34 +13,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef BACK_HOME_BT_RECOVERY_H
-#define BACK_HOME_BT_RECOVERY_H
+#ifndef BACK_HOME_RECOVERY_H
+#define BACK_HOME_RECOVERY_H
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include <move_base_msgs/MoveBaseAction.h>
-#include "back_home_BT/BTNavAction.h"
+//#include "Back_home/BTNavAction.h"
 
 #include <string>
 
 namespace Back_home
 {
 
-class Recovery : public BTNavAction
+class Recovery : public BT::ActionNodeBase//public BTNavAction
 {
   public:
     explicit Recovery(const std::string& name,
-    const std::string & action_name,
     const BT::NodeConfiguration & config);
 
-    void on_halt() override;
-    BT::NodeStatus on_tick() override;
-    void on_start() override;
-    void on_feedback(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback) override;
+    void halt() ;
+    BT::NodeStatus tick() ;
+    //void start() ;
+   // void on_feedback(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback) override;
 
     static BT::PortsList providedPorts() {
-      return {BT::InputPort<move_base_msgs::MoveBaseGoal>("pos")};
+      return {};
     }
 
   private:
@@ -49,6 +47,6 @@ class Recovery : public BTNavAction
     int counter_;
 };
 
-}  // namespace back_home
+}  // namespace Back_home
 
-#endif  // BACK_HOME_BT_RECOVERY_H
+#endif  // BACK_HOME_RECOVERY_H

@@ -6,3 +6,7 @@ orient_x0: 0.0
 orient_y0: 0.0
 orient_z0: 0.0 # 0.72
 orient_w0: 0.1 # 0.68
+
+# Set_goal_node
+tf_to_pos_topic: /tayros/tf_to_poses
+set_goal_activation_topic: /tay_ros/set_goal_activation

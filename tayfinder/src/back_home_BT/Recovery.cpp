@@ -26,47 +26,47 @@ namespace Back_home
 
 Recovery::Recovery(
   const std::string& name,
-  const std::string & action_name,
+  //const std::string & action_name,
   const BT::NodeConfiguration & config)
-: BTNavAction(name, action_name, config), counter_(0)
+: BT::ActionNodeBase(name, config)//BTNavAction(name, action_name, config), counter_(0)
 {
 }
 
 void
-Recovery::on_halt()
+Recovery::halt()
 {
 }
-
+/*
 void
-Recovery::on_start()
+Recovery::start()
 {
   move_base_msgs::MoveBaseGoal Target = getInput<move_base_msgs::MoveBaseGoal>("pos").value();
   Target.target_pose.header.stamp = ros::Time::now();
   set_goal(Target);
-}
+}*/
 
 BT::NodeStatus
-Recovery::on_tick()
+Recovery::tick()
 {
   
-  move_base_msgs::MoveBaseGoal Target = getInput<move_base_msgs::MoveBaseGoal>("pos").value();
+ // move_base_msgs::MoveBaseGoal Target = getInput<move_base_msgs::MoveBaseGoal>("pos").value();
 
   ROS_INFO("QUITEME EL OBSTACULO PORFAVOT");
   sleep(2);
-  set_goal(Target);
+ // set_goal(Target);
 
   return BT::NodeStatus::RUNNING;
 }
 
-void
-Recovery::on_feedback(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback)
-{
+//void
+//Recovery::on_feedback(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback)
+//{
 	//ROS_INFO("Coordinates: X -> %lf,  Y -> %lf", feedback->base_position.pose.position.x, feedback->base_position.pose.position.y);
-}
+//}
 
 }  // namespace Back_home
 
-#include "behaviortree_cpp_v3/bt_factory.h"
+/*#include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {
     BT::NodeBuilder builder =
@@ -78,4 +78,10 @@ BT_REGISTER_NODES(factory)
 
   factory.registerBuilder<Back_home::Recovery>(
     "Recovery", builder);
+}
+*/
+#include "behaviortree_cpp_v3/bt_factory.h"
+BT_REGISTER_NODES(factory)
+{
+  factory.registerNodeType<Back_home::Recovery>("Recovery");
 }

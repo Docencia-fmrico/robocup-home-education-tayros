@@ -17,6 +17,9 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   move_base_msgs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
 )
 
 catkin_package(
@@ -25,6 +28,9 @@ CATKIN_DEPENDS
     behaviortree_cpp_v3 
     actionlib_msgs 
     move_base_msgs
+    tf2
+    tf2_ros
+    tf2_geometry_msgs
 )
 
 include_directories(
@@ -55,11 +61,9 @@ foreach(bt_plugin ${plugin_libs})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
 endforeach()
 
-add_executable(find_my_mates 
-  src/find_my_mates.cpp
-)
-target_link_libraries(find_my_mates ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
+add_executable(find_my_mates src/find_my_mates.cpp)
 
+target_link_libraries(find_my_mates ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
 
 roslint_cpp(
   src/find_my_mates.cpp

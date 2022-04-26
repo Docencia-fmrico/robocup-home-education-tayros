@@ -45,6 +45,7 @@ add_library(BT_localize_suitcase SHARED src/init_sequence_BT/Localize_suitcase.c
 add_library(BT_recognize SHARED src/init_sequence_BT/Recognize.cpp)
 
 list(APPEND plugin_libs
+  BT_recovery
   BT_move_node
   BT_set_goal
   BT_target_reached

@@ -18,29 +18,27 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
 #include <move_base_msgs/MoveBaseAction.h>
-#include "follow_BT/BTNavAction.h"
+//#include "follow_BT/BTNavAction.h"
 
 #include <string>
 
 namespace follow_BT
 {
 
-class Recovery : public BTNavAction
+class Recovery : public BT::ActionNodeBase//public BTNavAction
 {
   public:
     explicit Recovery(const std::string& name,
-    const std::string & action_name,
     const BT::NodeConfiguration & config);
 
-    void on_halt() override;
-    BT::NodeStatus on_tick() override;
-    void on_start() override;
-    void on_feedback(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback) override;
+    void halt() ;
+    BT::NodeStatus tick() ;
+    //void start() ;
+   // void on_feedback(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback) override;
 
     static BT::PortsList providedPorts() {
-      return {BT::InputPort<move_base_msgs::MoveBaseGoal>("pos")};
+      return {};
     }
 
   private:

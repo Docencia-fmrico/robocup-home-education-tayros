@@ -46,6 +46,7 @@ int main(int argc, char **argv)
   factory.registerFromPlugin(loader.getOSName("BT_set_goal"));
   factory.registerFromPlugin(loader.getOSName("BT_target_reached"));
   factory.registerFromPlugin(loader.getOSName("BT_recognize"));
+ factory.registerFromPlugin(loader.getOSName("BT_recovery"));
 
   //factory.registerFromPlugin(loader.getOSName("BT_recognize"));
   factory.registerFromPlugin(loader.getOSName("BT_welcome_human"));
@@ -81,7 +82,7 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(10);
 
-  int state = RECOGNIZE;
+  int state = FOLLOWING;
   bool finish = false;
 
   /* Bt sequence */

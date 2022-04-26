@@ -16,3 +16,7 @@ num_persons: 3
 movement_topic: /tayros/movement
 DETECTION_DISTANCE: 0.5
 RANGE: 60
+
+# Set_goal_node
+tf_to_pos_topic: /tayros/tf_to_poses
+set_goal_activation_topic: /tay_ros/set_goal_activation

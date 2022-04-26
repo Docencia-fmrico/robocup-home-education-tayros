@@ -4,7 +4,7 @@
         <ReactiveSequence name="root_sequence">
             <ReactiveFallback>
                 <Move name="goHome" pos="{Home}"/> 
-                <Recovery name="recovery" pos="{Home}"/>
+                <Recovery name="Recovery"/>
             </ReactiveFallback>
             
             <Say_data name="sayData" data="{Description}"/>

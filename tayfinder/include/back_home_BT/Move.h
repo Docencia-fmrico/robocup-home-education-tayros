@@ -56,6 +56,7 @@ class Move : public BTNavAction
     float angularY_ ;
     float angularZ_ ;
     float angularW_ ;
+
 };
 
 }  // namespace back_home

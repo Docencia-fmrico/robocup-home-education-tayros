@@ -19,7 +19,7 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include <move_base_msgs/MoveBaseAction.h>
 #include "follow_BT/BTNavAction.h"
-
+#include "std_msgs/Int32.h"
 #include <string>
 
 #include "ros/ros.h"
@@ -44,6 +44,7 @@ class target_reached : public BT::ActionNodeBase
 
   private:
     ros::NodeHandle nh_;
+    ros::Publisher act_pub_;
 };
 
 }  // namespace FOLLOW_BT
