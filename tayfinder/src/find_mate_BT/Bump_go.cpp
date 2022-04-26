@@ -32,7 +32,7 @@ Bump_go::tick()
   ROS_INFO("Bump gooooo");
   move_.data = GO;
   mov_pub_.publish(move_);
-  sleep(4);
+  //sleep(4);
   return BT::NodeStatus::SUCCESS;
 }  // namespace find_mate
 

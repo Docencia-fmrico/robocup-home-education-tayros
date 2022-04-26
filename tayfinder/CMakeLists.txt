@@ -38,6 +38,7 @@ add_library(BT_get_mate_data_finder SHARED src/find_mate_BT/Get_mate_data.cpp)
 add_library(BT_is_any_mate_finder SHARED src/find_mate_BT/Is_any_mate.cpp)
 
 add_library(BT_move_node_finder SHARED src/back_home_BT/Move.cpp)
+add_library(BT_recovery_node_finder SHARED src/back_home_BT/Recovery.cpp)
 add_library(BT_say_data_finder SHARED src/back_home_BT/Say_data.cpp)
 
 list(APPEND plugin_libs
@@ -46,6 +47,7 @@ list(APPEND plugin_libs
   BT_bump_go_finder
   BT_is_any_mate_finder
   BT_get_mate_data_finder
+  BT_recovery_node_finder
 )
 
 foreach(bt_plugin ${plugin_libs})

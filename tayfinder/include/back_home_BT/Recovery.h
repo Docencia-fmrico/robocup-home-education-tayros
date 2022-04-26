@@ -1,3 +1,4 @@
+
 // Copyright 2019 Intelligent Robotics Lab
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,39 +13,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FOLLOW_BT_SET_GOAL_H
-#define FOLLOW_BT_SET_GOAL_H
+#ifndef BACK_HOME_BT_RECOVERY_H
+#define BACK_HOME_BT_RECOVERY_H
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
+
 #include <move_base_msgs/MoveBaseAction.h>
-#include "follow_BT/BTNavAction.h"
+#include "back_home_BT/BTNavAction.h"
 
 #include <string>
 
-#include "ros/ros.h"
-
-namespace follow_BT
+namespace Back_home
 {
 
-class SetGoal : public BT::ActionNodeBase
+class Recovery : public BTNavAction
 {
   public:
-    explicit SetGoal(const std::string& name, const BT::NodeConfiguration& config);
+    explicit Recovery(const std::string& name,
+    const std::string & action_name,
+    const BT::NodeConfiguration & config);
 
-    void halt() override;
+    void on_halt() override;
+    BT::NodeStatus on_tick() override;
+    void on_start() override;
+    void on_feedback(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback) override;
 
-    BT::NodeStatus tick() override;
-
-    static BT::PortsList providedPorts()
-    {
-      return { BT::OutputPort<move_base_msgs::MoveBaseGoal>("pos")};
+    static BT::PortsList providedPorts() {
+      return {BT::InputPort<move_base_msgs::MoveBaseGoal>("pos")};
     }
 
   private:
-    ros::NodeHandle nh_;
+
+    float time_sleep_;
+    int counter_;
 };
 
-}  // namespace FOLLOW_BT
+}  // namespace back_home
 
-#endif  // FOLLOW_BT_SET_GOAL_H
+#endif  // BACK_HOME_BT_RECOVERY_H

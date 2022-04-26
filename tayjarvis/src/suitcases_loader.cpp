@@ -45,6 +45,7 @@ int main(int argc, char **argv)
   factory.registerFromPlugin(loader.getOSName("BT_move_node"));
   factory.registerFromPlugin(loader.getOSName("BT_set_goal"));
   factory.registerFromPlugin(loader.getOSName("BT_target_reached"));
+  factory.registerFromPlugin(loader.getOSName("BT_recognize"));
 
   //factory.registerFromPlugin(loader.getOSName("BT_recognize"));
   factory.registerFromPlugin(loader.getOSName("BT_welcome_human"));

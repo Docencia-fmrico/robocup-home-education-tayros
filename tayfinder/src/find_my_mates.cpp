@@ -46,6 +46,7 @@ int main(int argc, char **argv)
   factory.registerFromPlugin(loader.getOSName("BT_get_mate_data_finder"));
   factory.registerFromPlugin(loader.getOSName("BT_say_data_finder"));
   factory.registerFromPlugin(loader.getOSName("BT_bump_go_finder"));
+  factory.registerFromPlugin(loader.getOSName("BT_recovery_node_finder"));
 
   std::string pkgpath = ros::package::getPath("tayfinder");
   std::string find_mate_path = pkgpath + "/behavior_trees_xml/find_mate.xml";

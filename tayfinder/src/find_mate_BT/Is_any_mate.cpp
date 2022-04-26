@@ -42,9 +42,9 @@ IsAnyMate::tick()
   goal.target_pose.pose.orientation.w = 1.0; // 0.98
 
   setOutput<move_base_msgs::MoveBaseGoal>("pos", goal);
-  move_.data = STOP;
-  mov_pub_.publish(move_);  
-  sleep(4);
+  //move_.data = STOP;
+  //mov_pub_.publish(move_);  
+  //sleep(4);
 
   return BT::NodeStatus::FAILURE;
 }  // namespace find_mate

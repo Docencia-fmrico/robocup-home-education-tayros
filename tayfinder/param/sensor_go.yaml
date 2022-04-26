@@ -9,3 +9,6 @@ linear_vel: 0.2
 angular_vel: 0.5
 led_control: true
 sound_control: false
+
+turning_time: 5.0
+backing_time: 3.0
