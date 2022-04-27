@@ -34,7 +34,7 @@ BbxFilter::BbxFilter():
   TopicPubID("/bbx_filtered/bounding_boxes/person"),
   filterobject_("person"),
   image_sub(nh_, "/camera/rgb/image_raw", 1),
-  depth_image_sub(nh_, "/camera/depth_registered/image_raw", 1),
+  depth_image_sub(nh_, "/camera/depth/image_raw", 1),
   bbx_sub(nh_, "/darknet_ros/bounding_boxes", 1),
   sync_bbx(MySyncPolicy_bbx(10), image_sub, bbx_sub, depth_image_sub)
   {
@@ -75,7 +75,8 @@ void BbxFilter::callback_bbx(const sensor_msgs::ImageConstPtr& image,
   }
 
 	cv::Mat hsv;
-  cv::cvtColor(img_ptr->image, hsv, CV_RGB2HSV);
+  hsv = img_ptr->image;
+  //cv::cvtColor(img_ptr->image, hsv, CV_RGB2HSV);
 	int step = hsv.step;
   int channels = 3;
 
@@ -147,11 +148,9 @@ void BbxFilter::callback_bbx(const sensor_msgs::ImageConstPtr& image,
           std::cout << "MOVE COUNT: " << move_restart_counter << std::endl;
           std::cout << "HSV Counter: " << hsv_restart_counter << std::endl;
           std::cout << "Publis  thres: " << publish_threshold_ << std::endl;
-          std::cout << "SIMIL1: " << Hsv_values[0].similarity << std::endl; 
-          std::cout << "SIMIL2: " << Hsv_values[1].similarity << std::endl; 
-          std::cout << "SIMIL3: " << Hsv_values[2].similarity << std::endl; 
-          std::cout << "SIMIL4: " << Hsv_values[3].similarity << std::endl; 
-          std::cout << "SIMIL5: " << Hsv_values[4].similarity << std::endl; 
+          for(int i = 0; i < OBJECT_HSV_LENGHT; i++){
+            std::cout << "SIMIL" << i << ": "<< Hsv_values[i].similarity << std::endl; 
+          }
           std::cout << "SIMILARITY(%): " << result_similarity;
           std::cout << std::endl << std::endl;
         }

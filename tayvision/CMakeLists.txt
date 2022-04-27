@@ -66,7 +66,8 @@ add_definitions(${PCL_DEFINITIONS})
 add_library(${PROJECT_NAME} 
 src/bbx_to_3d/BbxTo3D.cpp
 src/object_bbx_filter/BbxFilter.cpp
-src/bbx_color_detection/BbxColorDetector.cpp)
+src/bbx_color_detection/BbxColorDetector.cpp
+src/pointing_detection/PointingDetector.cpp)
 
 
 add_executable(bbx_to_3d_node src/bbx_to_3d_node.cpp)
@@ -77,6 +78,9 @@ target_link_libraries(bbx_filter_node ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 add_executable(bbx_color_detector_node src/bbx_color_detector_node.cpp)
 target_link_libraries(bbx_color_detector_node ${PROJECT_NAME} ${catkin_LIBRARIES})
+
+add_executable(pointing_detector_node src/pointing_detector_node.cpp)
+target_link_libraries(pointing_detector_node ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 roslint_cpp(
   

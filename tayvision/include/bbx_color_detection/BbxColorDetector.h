@@ -33,7 +33,6 @@ namespace bbx_color_detection
 enum{
   COL_SEGMETS = 10,
   ROW_SEGMETS = 10,
-  BUFFER_SIZE = 200,
 };
 
 typedef struct
@@ -55,13 +54,22 @@ typedef struct
   std::string name;
 }Color;
 
+typedef struct
+{
+  int x_min;
+  int x_max;
+  int y_min; 
+  int y_max;
+}BbxSize;
+
 class BbxColorDetector
 {
 public:
   BbxColorDetector();
   void callback_bbx(const sensor_msgs::ImageConstPtr& image, const darknet_ros_msgs::BoundingBoxesConstPtr& boxes);
-  void rgb_from_bbx(darknet_ros_msgs::BoundingBox box, cv::Mat src_hsv, Rgb result_hsv[COL_SEGMETS][ROW_SEGMETS], bool debug);
+  void rgb_from_bbx(darknet_ros_msgs::BoundingBox box, BbxSize bbx_size, cv::Mat src_hsv, Rgb result_hsv[COL_SEGMETS][ROW_SEGMETS], bool debug);
   bool check_color(Rgb rgb_data , Color color);
+  BbxSize box_borders_aliasing(darknet_ros_msgs::BoundingBox box);
 
 private:
   ros::NodeHandle nh;
@@ -85,10 +93,6 @@ private:
   float last_angle_;
   int restart_counter;
   bool bbx_restart;
-
-  // For border aliasing
-  int box_xmax;
-  int box_xmin;
   
   // ---------------------- Color identification ---------------------- //
   static const int NUM_COLORS = 8;
@@ -109,6 +113,14 @@ private:
   image_transport::ImageTransport it_;
   image_transport::Publisher image_pub_;
   // ---------------------- ----------- ---------------------- //
+
+  // ---------------------- Border Aliasing ---------------------- //
+  const int COL_ALIASING_FACTOR_TOP = 10; /* bbx crop part, if 10 1/10 of the image croped */
+  const int COL_ALIASING_FACTOR_BOT = 10;
+  const int ROW_ALIASING_FACTOR_TOP = 5;
+  const int ROW_ALIASING_FACTOR_BOT = 100;
+  const bool ALIASING = true;
+  // ---------------------- --------------- ---------------------- //
   
   std::string detectedObject_;
   std::string TopicID;

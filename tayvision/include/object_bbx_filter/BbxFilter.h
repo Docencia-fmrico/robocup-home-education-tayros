@@ -30,8 +30,8 @@ namespace object_bbx_filter
 {
 
 enum{
-  COL_SEGMETS = 10,
-  ROW_SEGMETS = 10
+  COL_SEGMETS = 7,
+  ROW_SEGMETS = 7
 };
 
 typedef struct
@@ -41,15 +41,6 @@ typedef struct
   int v;
 }Hsv;
 
-typedef struct
-{
-  int hupper; 
-  int hlower;
-  int supper; 
-  int slower;
-  int vupper; 
-  int vlower;
-}Color;
 
 typedef struct{
   Hsv values[COL_SEGMETS][ROW_SEGMETS];
@@ -66,7 +57,7 @@ public:
 private:
   ros::NodeHandle nh_;
   const bool DEBUG = true;
-  const bool IMAGE_DEBUG = false;
+  const bool IMAGE_DEBUG = true;
 
   typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,darknet_ros_msgs::BoundingBoxes,
   sensor_msgs::Image> MySyncPolicy_bbx;
@@ -85,10 +76,9 @@ private:
   const float H_VALUE_IMPORTANCE= 0.4 ;      // The part that the Hue value gonna contributte[0 - 1]
   const float S_VALUE_IMPORTANCE= 0.4 ;      // The sum of the 3 need to be 1
   const float V_VALUE_IMPORTANCE= 0.2 ;
-  const float INIT_VALUES_IMPORTANCE = 0.5;  // The part that the diff with init values gonna contributte[0 - 1]
   const float PUBLISH_TRESHOLD = 0.7;        // The minimun simil to publish data
   const int RESTART_HSV_TICKS = 100;
-  static const int OBJECT_HSV_LENGHT = 5;
+  static const int OBJECT_HSV_LENGHT = 10;
 
   bool first_time; // DEBUG
   float init_values_importance;

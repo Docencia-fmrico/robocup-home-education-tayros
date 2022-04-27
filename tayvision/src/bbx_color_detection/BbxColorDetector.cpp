@@ -112,11 +112,11 @@ BbxColorDetector::BbxColorDetector():
     magenta.counter = 0;
     colors_arr[6] = magenta;
 
-    whithe.rlower = 204;
+    whithe.rlower = 153;
     whithe.rupper = 255;
-    whithe.glower = 204;
+    whithe.glower = 153;
     whithe.gupper = 255;
-    whithe.blower = 204;
+    whithe.blower = 153;
     whithe.bupper = 255;
     whithe.name = "WHITHE";
     whithe.counter = 0;
@@ -146,14 +146,12 @@ void BbxColorDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
 	for (const auto & box : boxes->bounding_boxes)
   {
     // Box borders aliasing
-    int b_w = box.xmax - box.xmin;
-    int b_h = box.ymax - box.ymin;
-
-    box_xmax = box.xmax - (b_w / 10);
-    box_xmin = box.xmin + (b_w / 10);
+    
+    BbxSize bbx_aliased;
+    bbx_aliased = box_borders_aliasing(box);
 
     Rgb  rgb_current_values[COL_SEGMETS][ROW_SEGMETS];
-    rgb_from_bbx(box, rgb,  rgb_current_values, DEBUG);
+    rgb_from_bbx(box, bbx_aliased, rgb, rgb_current_values, DEBUG);
 
     // Color study 
     for(int col = 0; col < COL_SEGMETS; col++){
@@ -184,14 +182,14 @@ void BbxColorDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
 			
 			int step = rgb.step;
 
-      int px_width = box_xmax - box_xmin;
-      int py_height = box.ymax - box.ymin;
+      int px_width = bbx_aliased.x_max - bbx_aliased.x_min;
+      int py_height = bbx_aliased.y_max - bbx_aliased.y_min;
 
       int px_width_segment = px_width / COL_SEGMETS;
       int py_height_segment = py_height / ROW_SEGMETS;
 
-      int current_px =  box_xmin;
-      int current_py =  box.ymin;
+      int current_px =  bbx_aliased.x_min;
+      int current_py =  bbx_aliased.y_min;
 
 
 			//std::cout << "INITcurrent_px: " << current_px << " INITcurrent_py: " << current_py << std::endl; 
@@ -210,7 +208,7 @@ void BbxColorDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
 					current_py += py_height_segment;
 				}
 				current_px += px_width_segment;
-				current_py = box.ymin;
+				current_py = bbx_aliased.y_min;
 			}
 		}
 	}
@@ -223,48 +221,47 @@ void BbxColorDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
 
 }
 
-void BbxColorDetector::rgb_from_bbx(darknet_ros_msgs::BoundingBox box, cv::Mat src_rgb, Rgb result_hsv[COL_SEGMETS][ROW_SEGMETS], bool debug){
+void BbxColorDetector::rgb_from_bbx(darknet_ros_msgs::BoundingBox box, BbxSize bbx_size, cv::Mat src_rgb, Rgb result_hsv[COL_SEGMETS][ROW_SEGMETS], bool debug){
 
-  // Px modified TAKE CARE 
   int step = src_rgb.step;
-  int segment_Haverage = 0; 
-  int segment_Saverage = 0; 
-  int segment_Vaverage = 0; 
+  int segment_Baverage = 0; 
+  int segment_Gaverage = 0; 
+  int segment_Raverage = 0; 
   int segment_pixs = 0;
 
-  int px_width = box_xmax - box_xmin;
-  int py_height = box.ymax - box.ymin;
+  int px_width = bbx_size.x_max - bbx_size.x_min;
+  int py_height = bbx_size.y_max - bbx_size.y_min;
 
   int px_width_segment = px_width / COL_SEGMETS;
   int py_height_segment = py_height / ROW_SEGMETS;
 
-  int current_px =  box_xmin;
-  int current_py =  box.ymin;
+  int current_px =  bbx_size.x_min;
+  int current_py =  bbx_size.y_min;
 
 
   for(int col = 0; col < COL_SEGMETS; col++){
     for(int row = 0; row < ROW_SEGMETS; row++){
-      segment_Haverage = 0; 
-      segment_Saverage = 0; 
-      segment_Vaverage = 0; 
+      segment_Baverage = 0; 
+      segment_Gaverage = 0; 
+      segment_Raverage = 0; 
       segment_pixs = 0;
 
       for(int i = current_px; i < (current_px + px_width_segment); i++){
         for(int j = current_py; j < (current_py + py_height_segment) ; j++){
           int position = i * CHANNELS + j * step;              
-          segment_Haverage += src_rgb.data[position];
-          segment_Saverage += src_rgb.data[position + 1];
-          segment_Vaverage += src_rgb.data[position + 2];
+          segment_Baverage += src_rgb.data[position];
+          segment_Gaverage += src_rgb.data[position + 1];
+          segment_Raverage += src_rgb.data[position + 2];
           segment_pixs++;
         }
       }
       current_py += py_height_segment;
-      result_hsv[col][row].b = segment_Haverage / segment_pixs;
-      result_hsv[col][row].g = segment_Saverage / segment_pixs;
-      result_hsv[col][row].r = segment_Vaverage / segment_pixs;
+      result_hsv[col][row].b = segment_Baverage / segment_pixs;
+      result_hsv[col][row].g = segment_Gaverage / segment_pixs;
+      result_hsv[col][row].r = segment_Raverage / segment_pixs;
     }
     current_px += px_width_segment;
-    current_py = box.ymin;
+    current_py = bbx_size.y_min;
   }
 
   if(debug){
@@ -283,9 +280,39 @@ bool BbxColorDetector::check_color(Rgb rgb_data , Color color){
   if(rgb_data.r >= color.rlower && rgb_data.r <= color.rupper && 
     rgb_data.g >= color.glower && rgb_data.g <= color.gupper &&
     rgb_data.b >= color.blower && rgb_data.b <= color.bupper){
-      return true;
+    return true;
   }
   return false;
+}
+
+BbxSize BbxColorDetector::box_borders_aliasing(darknet_ros_msgs::BoundingBox box){
+
+  BbxSize bbx_aliased;
+
+  if(ALIASING){
+
+    int b_w = box.xmax - box.xmin;
+    int b_h = box.ymax - box.ymin;
+
+    bbx_aliased.x_max = box.xmax - (b_w / COL_ALIASING_FACTOR_TOP);
+    bbx_aliased.x_min = box.xmin + (b_w / COL_ALIASING_FACTOR_BOT);
+
+    bbx_aliased.y_max = box.ymax - (b_h / ROW_ALIASING_FACTOR_BOT);
+    bbx_aliased.y_min = box.ymin + (b_h / ROW_ALIASING_FACTOR_TOP);
+
+    std::cout << "PX MIN: " << box.xmin << " Aliased: " << bbx_aliased.x_min << std::endl; 
+    std::cout << "PX MAX: " << box.xmax << " Aliased: " << bbx_aliased.x_max << std::endl; 
+    std::cout << "PY MAX: " << box.ymax << " Aliased: " << bbx_aliased.y_max << std::endl; 
+    std::cout << "PY MIN: " << box.ymin << " Aliased: " << bbx_aliased.y_min << std::endl; 
+  }
+  else{
+    bbx_aliased.x_max = box.xmax;
+    bbx_aliased.x_min = box.xmin;
+    bbx_aliased.y_max = box.ymax;
+    bbx_aliased.y_min = box.ymin;
+  }
+  
+  return bbx_aliased;
 }
 
 
