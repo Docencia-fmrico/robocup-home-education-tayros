@@ -1,0 +1,22 @@
+
+# Home coordinates
+pos_x0: 0.008
+pos_y0 : -4.168
+pos_z0: 0.0  # Must be 0.0 for the kobuki
+
+orient_x0: 0.0
+orient_y0: 0.0
+orient_z0: 0.0
+orient_w0: 0.1
+
+# Other parameters
+num_persons: 3
+
+# Lidar parameters for bump_go
+movement_topic: /tayros/movement
+DETECTION_DISTANCE: 0.5
+RANGE: 60
+
+# Set_goal_node
+tf_to_pos_topic: /tayros/tf_to_poses
+set_goal_activation_topic: /tay_ros/set_goal_activation

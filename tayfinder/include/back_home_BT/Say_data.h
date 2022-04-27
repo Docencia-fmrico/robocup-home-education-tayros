@@ -12,25 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FOLLOW_BT_TARGET_REACHED
-#define FOLLOW_BT_TARGET_REACHED
+#ifndef BACK_HOME_BT_SAY_DATA_H
+#define BACK_HOME_BT_SAY_DATA_H
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include <move_base_msgs/MoveBaseAction.h>
-#include "follow_BT/BTNavAction.h"
-#include "std_msgs/Int32.h"
+
 #include <string>
 
 #include "ros/ros.h"
 
-namespace follow_BT
+namespace Back_home
 {
 
-class target_reached : public BT::ActionNodeBase
+class Say_data : public BT::ActionNodeBase
 {
   public:
-    explicit target_reached(const std::string& name, const BT::NodeConfiguration& config);
+    explicit Say_data(const std::string& name, const BT::NodeConfiguration& config);
 
     void halt() override;
 
@@ -38,15 +37,15 @@ class target_reached : public BT::ActionNodeBase
 
     static BT::PortsList providedPorts()
     {
-      return {};
+      return { BT::InputPort<int>("data")};
     }
-
 
   private:
     ros::NodeHandle nh_;
-    ros::Publisher act_pub_;
+    int data_;
+    const int NUM_OF_MATES_ = 3;
 };
 
-}  // namespace FOLLOW_BT
+}  // namespace Back_home
 
-#endif  // FOLLOW_BT_TARGET_REACHED_BT
+#endif  // BACK_HOME_BT_SAY_DATA_H

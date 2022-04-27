@@ -1,14 +1,3 @@
-
-#include "behaviortree_cpp_v3/behavior_tree.h"
-#include "behaviortree_cpp_v3/bt_factory.h"
-
-#include <move_base_msgs/MoveBaseAction.h>
-#include "follow_BT/BTNavAction.h"
-
-#include <string>
-#include "ros/ros.h"
-
-
 // Copyright 2019 Intelligent Robotics Lab
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +18,7 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include <move_base_msgs/MoveBaseAction.h>
-#include "follow_BT/BTNavAction.h"
-
+#include "std_msgs/Int32.h"
 #include <string>
 
 #include "ros/ros.h"
@@ -41,7 +29,8 @@ namespace follow_BT
 class SetGoal : public BT::ActionNodeBase
 {
   public:
-    explicit SetGoal(const std::string& name, const BT::NodeConfiguration& config);
+    explicit SetGoal(const std::string& name, 
+    const BT::NodeConfiguration& config);
 
     void halt() override;
 
@@ -54,6 +43,11 @@ class SetGoal : public BT::ActionNodeBase
 
   private:
     ros::NodeHandle nh_;
+    ros::Publisher act_pub_;
+    ros::Subscriber pos_sub_;
+    void callback(const move_base_msgs::MoveBaseGoal::ConstPtr& msg);
+
+    move_base_msgs::MoveBaseGoal goal_;
 };
 
 }  // namespace FOLLOW_BT

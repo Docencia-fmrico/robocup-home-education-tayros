@@ -23,7 +23,7 @@ BT::NodeStatus
 Localize_suitcase::tick()
 {
   ROS_INFO("Veo tu equipajeee");
-  return BT::NodeStatus::FAILURE;
+  return BT::NodeStatus::RUNNING;   /* Running siempre y true cuando termine */
 }  
 
 }// namespace person_recognize

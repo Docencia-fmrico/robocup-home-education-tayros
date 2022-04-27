@@ -12,25 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FOLLOW_BT_TARGET_REACHED
-#define FOLLOW_BT_TARGET_REACHED
+#ifndef FIND_MATE_BT_BUMP_GO_H
+#define FIND_MATE_BT_BUMP_GO_H
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "std_msgs/Int32.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include <move_base_msgs/MoveBaseAction.h>
-#include "follow_BT/BTNavAction.h"
-#include "std_msgs/Int32.h"
+
 #include <string>
 
 #include "ros/ros.h"
 
-namespace follow_BT
+namespace find_mate
 {
 
-class target_reached : public BT::ActionNodeBase
+class Bump_go : public BT::ActionNodeBase
 {
   public:
-    explicit target_reached(const std::string& name, const BT::NodeConfiguration& config);
+    explicit Bump_go(const std::string& name, const BT::NodeConfiguration& config);
 
     void halt() override;
 
@@ -41,12 +41,12 @@ class target_reached : public BT::ActionNodeBase
       return {};
     }
 
-
   private:
     ros::NodeHandle nh_;
-    ros::Publisher act_pub_;
+    ros::Publisher mov_pub_;
+    std_msgs::Int32 move_;
 };
 
-}  // namespace FOLLOW_BT
+}  // namespace find_mate
 
-#endif  // FOLLOW_BT_TARGET_REACHED_BT
+#endif  // FIND_MATE_BT_BUMP_GO_H

@@ -4,7 +4,7 @@
         <Sequence name="root_sequence">
             <Welcome_human name="Welcome_human"/>
             <!-- <say_instruction name="recognize" mode="{instruct}"/>  -->
-            <Localize_suitcase name="Localize_suitcase"/> <!--Final move to parking-->
+            <Localize_suitcase name="Localize_suitcase"/>
         </Sequence>
 
      </BehaviorTree>

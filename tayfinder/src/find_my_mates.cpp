@@ -27,41 +27,37 @@
 
 enum
 {
-  RECOGNIZE = 0,
-  FOLLOWING = 1,
-  GOING_HOME = 2,
+  FIND_MATE = 1,
+  INFORM_REFEREE = 2,
 };
 
 int main(int argc, char **argv) 
 {
   /* BT creation */
-  ros::init(argc, argv, "suitcases_loader");
+  ros::init(argc, argv, "kobfinder");
   ros::NodeHandle n("~");
-
+  int num_persons = n.param("num_persons" , 1);
 
   BT::BehaviorTreeFactory factory;
   BT::SharedLibrary loader;
 
-  factory.registerFromPlugin(loader.getOSName("BT_move_node"));
-  factory.registerFromPlugin(loader.getOSName("BT_set_goal"));
-  factory.registerFromPlugin(loader.getOSName("BT_target_reached"));
-  factory.registerFromPlugin(loader.getOSName("BT_recognize"));
- factory.registerFromPlugin(loader.getOSName("BT_recovery"));
+  factory.registerFromPlugin(loader.getOSName("BT_move_node_finder"));
+  factory.registerFromPlugin(loader.getOSName("BT_is_any_mate_finder"));
+  factory.registerFromPlugin(loader.getOSName("BT_get_mate_data_finder"));
+  factory.registerFromPlugin(loader.getOSName("BT_say_data_finder"));
+  factory.registerFromPlugin(loader.getOSName("BT_bump_go_finder"));
+  factory.registerFromPlugin(loader.getOSName("BT_recovery_node_finder"));
 
-  //factory.registerFromPlugin(loader.getOSName("BT_recognize"));
-  factory.registerFromPlugin(loader.getOSName("BT_welcome_human"));
-  factory.registerFromPlugin(loader.getOSName("BT_localize_suitcase"));
-
-  std::string pkgpath = ros::package::getPath("tayjarvis");
-  std::string follow_path = pkgpath + "/behavior_trees_xml/follow.xml";
-  std::string back_home_path = pkgpath + "/behavior_trees_xml/back_home.xml";
-  std::string recognize_path = pkgpath + "/behavior_trees_xml/init_sequence.xml";
+  std::string pkgpath = ros::package::getPath("tayfinder");
+  std::string find_mate_path = pkgpath + "/behavior_trees_xml/find_mate.xml";
+  std::string inform_referee_path = pkgpath + "/behavior_trees_xml/back_home.xml";
+  //std::string recognize_path = pkgpath + "/behavior_trees_xml/init_sequence.xml";
 
   /* Blackboard set */
   move_base_msgs::MoveBaseGoal home;
 
   home.target_pose.header.frame_id = "map";
-  home.target_pose.pose.position.x = n.param("pos_x0" , 0.0);
+  home.target_pose.pose.position.x = n.param("pos_x0" , 3.0);
   home.target_pose.pose.position.y = n.param("pos_y0", 0.0);
   home.target_pose.pose.position.z = n.param("pos_z0", 0.0);
   home.target_pose.pose.orientation.x = n.param("orient_x0", 0.0);
@@ -71,18 +67,15 @@ int main(int argc, char **argv)
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("Home", home);
-  blackboard->set("goal", home);
+  int data, counter = 0;
+  blackboard->set("data", data);
 
-  BT::Tree follow = factory.createTreeFromFile(follow_path, blackboard);
-  BT::Tree back_home = factory.createTreeFromFile(back_home_path, blackboard);
-  BT::Tree recognition = factory.createTreeFromFile(recognize_path, blackboard);
-  
-  //auto publisher_zmq1 = std::make_shared<BT::PublisherZMQ>(follow, 10, 1666, 1667);
-  /* Neccesary to use groot */
+  BT::Tree find_mate = factory.createTreeFromFile(find_mate_path, blackboard);
+  BT::Tree inform_referee = factory.createTreeFromFile(inform_referee_path, blackboard);
 
   ros::Rate loop_rate(10);
 
-  int state = FOLLOWING;
+  int state = FIND_MATE;
   bool finish = false;
 
   /* Bt sequence */
@@ -90,33 +83,31 @@ int main(int argc, char **argv)
   {
     switch (state)
     {
-    case RECOGNIZE:
-      if (recognition.rootNode()->executeTick() == BT::NodeStatus::SUCCESS)
+    case FIND_MATE:
+      if (find_mate.rootNode()->executeTick() == BT::NodeStatus::SUCCESS)
       {
-        //state = FOLLOWING;     
-        finish = true;
-      }
-      break;
-
-    case FOLLOWING:
-      if (follow.rootNode()->executeTick() == BT::NodeStatus::SUCCESS)
-      {
-        //state = GOING_HOME;      
-        finish = true;
+        inform_referee = factory.createTreeFromFile(inform_referee_path, blackboard);
+        state = INFORM_REFEREE;      
       }
       break;
     
-    case GOING_HOME:
-     if (back_home.rootNode()->executeTick() == BT::NodeStatus::SUCCESS)
+    case INFORM_REFEREE:
+     if (inform_referee.rootNode()->executeTick() == BT::NodeStatus::SUCCESS)
       {
-        ROS_INFO("Prueba terminada!!!!!!!!!!!!!!");
-        finish = true;
+        if (++counter == num_persons)
+        {
+          finish = true;
+        }
+
+        find_mate = factory.createTreeFromFile(find_mate_path, blackboard);
+        state = FIND_MATE;
       }
       break;
 
     default:
       break;
     }
+
     ros::spinOnce();
     loop_rate.sleep();
   }

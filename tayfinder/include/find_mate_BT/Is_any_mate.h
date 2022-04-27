@@ -12,25 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FOLLOW_BT_TARGET_REACHED
-#define FOLLOW_BT_TARGET_REACHED
+#ifndef FIND_MATE_BT_IS_ANY_MATE_H
+#define FIND_MATE_BT_IS_ANY_MATE_H
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-#include <move_base_msgs/MoveBaseAction.h>
-#include "follow_BT/BTNavAction.h"
 #include "std_msgs/Int32.h"
+#include <move_base_msgs/MoveBaseAction.h>
+
 #include <string>
 
 #include "ros/ros.h"
 
-namespace follow_BT
+namespace find_mate
 {
 
-class target_reached : public BT::ActionNodeBase
+class IsAnyMate : public BT::ActionNodeBase
 {
   public:
-    explicit target_reached(const std::string& name, const BT::NodeConfiguration& config);
+    explicit IsAnyMate(const std::string& name, const BT::NodeConfiguration& config);
 
     void halt() override;
 
@@ -38,15 +38,15 @@ class target_reached : public BT::ActionNodeBase
 
     static BT::PortsList providedPorts()
     {
-      return {};
+      return { BT::OutputPort<move_base_msgs::MoveBaseGoal>("pos")};
     }
-
 
   private:
     ros::NodeHandle nh_;
-    ros::Publisher act_pub_;
+    ros::Publisher mov_pub_;
+    std_msgs::Int32 move_;
 };
 
-}  // namespace FOLLOW_BT
+}  // namespace find_mate
 
-#endif  // FOLLOW_BT_TARGET_REACHED_BT
+#endif  // FIND_MATE_BT_IS_ANY_MATE_H

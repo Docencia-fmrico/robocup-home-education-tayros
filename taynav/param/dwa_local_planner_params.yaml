@@ -7,9 +7,9 @@ DWAPlannerROS:
   max_vel_y: 0.0  # diff drive robot    
   min_vel_y: 0.0  # diff drive robot
 
-  max_trans_vel: 0.5 # choose slightly less than the base's capability
-  min_trans_vel: 0.1  # this is the min trans velocity when there is negligible rotational velocity
-  trans_stopped_vel: 0.1
+  max_trans_vel: 0.35 # choose slightly less than the base's capability
+  min_trans_vel: 0.15  # this is the min trans velocity when there is negligible rotational velocity
+  trans_stopped_vel: 0.3
 
   # Warning!
   #   do not set min_trans_vel to 0.0 otherwise dwa will always think translational velocities
@@ -17,7 +17,7 @@ DWAPlannerROS:
 
   max_rot_vel: 0.6  # choose slightly less than the base's capability
   min_rot_vel: -0.6  # this is the min angular velocity when there is negligible translational velocity
-  rot_stopped_vel: 0.3
+  rot_stopped_vel: 0.4
 
   acc_lim_x: 1.0 # maximum is theoretically 2.0, but we
   acc_lim_theta: 2.2
@@ -39,9 +39,9 @@ DWAPlannerROS:
   goal_distance_bias: 24.0      # 24.0   - wighting for how much it should attempt to reach its goal
   occdist_scale: 0.5            # 0.01   - weighting for how much the controller should avoid obstacles
   forward_point_distance: 0.425 # 0.325  - how far along to place an additional scoring point
-  stop_time_buffer: 0.5         # 0.2    - amount of time a robot must stop in before colliding for a valid traj.
-  scaling_speed: 0.05 #0.15          # 0.25   - absolute velocity at which to start scaling the robot's footprint
-  max_scaling_factor: 0.05 #0.15      # 0.2    - how much to scale the robot's footprint when at speed.
+  stop_time_buffer: 0.3         # 0.2    - amount of time a robot must stop in before colliding for a valid traj.
+  scaling_speed: 0.15           # 0.25   - absolute velocity at which to start scaling the robot's footprint
+  max_scaling_factor: 0.15      # 0.2    - how much to scale the robot's footprint when at speed.
 
 # Oscillation Prevention Parameters
   oscillation_reset_dist: 0.05  # 0.05   - how far to travel before resetting oscillation flags
