@@ -43,7 +43,7 @@ int main(int argc, char **argv)
   BT::SharedLibrary loader;
 
   factory.registerFromPlugin(loader.getOSName("BT_move_node"));
-  factory.registerFromPlugin(loader.getOSName("BT_set_goal"));
+  factory.registerFromPlugin(loader.getOSName("BT_follow"));
   factory.registerFromPlugin(loader.getOSName("BT_target_reached"));
   factory.registerFromPlugin(loader.getOSName("BT_recognize"));
  factory.registerFromPlugin(loader.getOSName("BT_recovery"));

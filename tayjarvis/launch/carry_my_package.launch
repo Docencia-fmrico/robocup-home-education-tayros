@@ -2,7 +2,10 @@
 
 <!--<include file="$(find navigation)/launch/navigation.launch"/>-->
 <!--<include file="$(find taynav)/launch/navigation.launch"/>-->
-<node pkg="taynav" type="set_goal_node" name="set_goal_node">
+
+<node pkg="tayjarvis" type="Movement" name="Movement"/>
+
+<node pkg="tayjarvis" type="Movement" name="Movement">
     <rosparam command="load" file="$(find tayjarvis)/param/coordinates.yaml"/>
 </node>
 

@@ -2,8 +2,7 @@
      <BehaviorTree ID="FollowTree">
 
         <ReactiveSequence name="root_sequence">
-            <Set_goal name="set_goal" pos="{goal}"/>
-            <Move name="goHome" pos="{goal}"/>  <!--Always true-->
+            <Follow name="follow_human"/>
             <Target_reached name="Target_reached"/>
         </ReactiveSequence>
 
