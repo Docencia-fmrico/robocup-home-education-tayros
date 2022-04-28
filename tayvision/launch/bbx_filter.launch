@@ -1,0 +1,16 @@
+<launch>
+
+	<include file="$(find darknet_ros)/launch/darknet_ros.launch">
+    <arg name="image"  value="/usb_cam/image_raw"/>
+		<!-- "/usb_cam/image_raw" --> <!-- "/camera/rgb/image_raw" -->
+  </include>
+
+  <node 
+	pkg="tayvision" type="bbx_to_3d_node" name="Bbx_To_3d" output="screen">
+  </node>
+
+  <node 
+	pkg="tayvision" type="bbx_filter_node" name="Bbx_Filter" output="screen">
+  </node>
+
+</launch>
