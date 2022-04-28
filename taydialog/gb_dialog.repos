@@ -1,0 +1,9 @@
+repositories:
+  dialogflow_ros:
+    type: git
+    url: https://github.com/jginesclavero/dialogflow_ros.git
+    version: master
+  gb_dialog:
+    type: git
+    url: https://github.com/IntelligentRoboticsLabs/gb_dialog.git
+    version: master
