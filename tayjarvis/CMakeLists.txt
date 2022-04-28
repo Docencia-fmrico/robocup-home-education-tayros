@@ -17,6 +17,12 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   move_base_msgs
+  move_base_msgs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
+  kobuki_msgs 
+  sensor_msgs
 )
 
 catkin_package(
@@ -25,6 +31,11 @@ CATKIN_DEPENDS
     behaviortree_cpp_v3 
     actionlib_msgs 
     move_base_msgs
+    tf2
+    tf2_ros
+    tf2_geometry_msgs
+    kobuki_msgs 
+    sensor_msgs
 )
 
 include_directories(
@@ -35,9 +46,9 @@ include_directories(
 
 # Follow BTnodes
 add_library(BT_move_node SHARED src/follow_BT/Move.cpp)
-add_library(BT_set_goal SHARED src/follow_BT/Set_goal.cpp)
 add_library(BT_target_reached SHARED src/follow_BT/target_reached.cpp)
 add_library(BT_recovery SHARED src/follow_BT/Recovery.cpp)
+add_library(BT_follow SHARED src/follow_BT/Follow.cpp)
 
 # Person_recognize BT nodes
 add_library(BT_welcome_human SHARED src/init_sequence_BT/Welcome_human.cpp)
@@ -47,8 +58,8 @@ add_library(BT_recognize SHARED src/init_sequence_BT/Recognize.cpp)
 list(APPEND plugin_libs
   BT_recovery
   BT_move_node
-  BT_set_goal
   BT_target_reached
+  BT_follow
 
   BT_localize_suitcase
   BT_welcome_human
@@ -65,7 +76,10 @@ add_executable(suitcases_loader
 )
 target_link_libraries(suitcases_loader ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
 
+add_executable(movement src/follow/Movement.cpp)
+target_link_libraries(movement ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
 
 roslint_cpp(
   src/suitcases_loader.cpp
+    src/follow/Movement.cpp
 )

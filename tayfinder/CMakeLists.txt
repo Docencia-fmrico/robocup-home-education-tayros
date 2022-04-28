@@ -20,6 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_ros
   tf2_geometry_msgs
+  kobuki_msgs 
+  sensor_msgs
 )
 
 catkin_package(
@@ -31,6 +33,8 @@ CATKIN_DEPENDS
     tf2
     tf2_ros
     tf2_geometry_msgs
+    kobuki_msgs 
+    sensor_msgs
 )
 
 include_directories(
@@ -62,8 +66,8 @@ foreach(bt_plugin ${plugin_libs})
 endforeach()
 
 add_executable(find_my_mates src/find_my_mates.cpp)
-
 target_link_libraries(find_my_mates ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
+
 
 roslint_cpp(
   src/find_my_mates.cpp
