@@ -22,10 +22,22 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_geometry_msgs
   kobuki_msgs 
   sensor_msgs
+  cv_bridge
+  image_transport
+  pcl_conversions
+  pcl_ros
+  darknet_ros_msgs
+  image_geometry
 )
+
+find_package(OpenCV)
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 catkin_package(
 CATKIN_DEPENDS 
+INCLUDE_DIRS include
+LIBRARIES
+  geometry_msgs
     roscpp std_msgs 
     behaviortree_cpp_v3 
     actionlib_msgs 
@@ -35,11 +47,17 @@ CATKIN_DEPENDS
     tf2_geometry_msgs
     kobuki_msgs 
     sensor_msgs
+    cv_bridge
+    image_transport
+    pcl_conversions
+    pcl_ros
+    image_geometry
 )
 
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
   ${ZMQ_INCLUDE_DIRS}
 )
 
@@ -50,6 +68,7 @@ add_library(BT_is_any_mate_finder SHARED src/find_mate_BT/Is_any_mate.cpp)
 add_library(BT_move_node_finder SHARED src/back_home_BT/Move.cpp)
 add_library(BT_recovery_node_finder SHARED src/back_home_BT/Recovery.cpp)
 add_library(BT_say_data_finder SHARED src/back_home_BT/Say_data.cpp)
+add_library(${PROJECT_NAME}  src/person_localization/PersonLocalizator.cpp)
 
 list(APPEND plugin_libs
   BT_move_node_finder
@@ -67,6 +86,9 @@ endforeach()
 
 add_executable(find_my_mates src/find_my_mates.cpp)
 target_link_libraries(find_my_mates ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
+
+add_executable(person_localizator src/person_localizator.cpp)
+target_link_libraries(person_localizator ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
 roslint_cpp(
