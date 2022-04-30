@@ -35,45 +35,75 @@ enum{
   PERSON_BUFFER = 4,
 };
 
+
 typedef struct
 {
- float x;
- float y; 
- float z;
+ double x;
+ double y;
+ double z;
+ double roll;
+ double pitch;
+ double yaw;
+ int zone;
  int status;
 }PersonPoint3D;
+
+typedef struct
+{
+	double minX;
+	double	maxX;
+	double minY;
+	double maxY;
+	std::string name;
+	int id;
+}Zone;
 
 class PersonLocalizator
 {
 public:
   PersonLocalizator();
   void callback_bbx(const sensor_msgs::ImageConstPtr& image, const darknet_ros_msgs::BoundingBoxesConstPtr& boxes);
-	void callback_cam_info(const sensor_msgs::CameraInfoConstPtr& cam_info);
 
 private:
-  ros::NodeHandle nh;
-  const bool DEBUG = true;
+	ros::NodeHandle nh;
+	const bool DEBUG = true;
 
-  typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,
-  darknet_ros_msgs::BoundingBoxes> MySyncPolicy_bbx;
-  message_filters::Subscriber<sensor_msgs::Image> image_sub;
-  message_filters::Subscriber<darknet_ros_msgs::BoundingBoxes> bbx_sub;
-  message_filters::Synchronizer<MySyncPolicy_bbx> sync_bbx;
+	typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,
+	darknet_ros_msgs::BoundingBoxes> MySyncPolicy_bbx;
+	message_filters::Subscriber<sensor_msgs::Image> image_sub;
+	message_filters::Subscriber<darknet_ros_msgs::BoundingBoxes> bbx_sub;
+	message_filters::Synchronizer<MySyncPolicy_bbx> sync_bbx;
 
+	// ---------------- Persons Info --------------- //
 	const int EMPTY = -1;
 	const int NOT_STUDIED = 0;
 	const int STUDIED = 1;
 	const float PERSON_RANGE = 1; // metros
 	PersonPoint3D person_list[PERSON_BUFFER];
-	bool cam_info_taked;
-	image_geometry::PinholeCameraModel cam_model_;
+	// ---------------- ------------ --------------- //
+
+	// ----------------- Zones Info ---------------- //
+	static const int ZONES_NUMBER = 3;
+	const int OUTSIDE = -1;
+	const int KITCHEN = 0;
+	const int BATHROOM = 1;
+	const int LIVING = 2;
+
+	Zone zones[ZONES_NUMBER];
+	// ---------------- ------------ --------------- //
+
+
 
 	void restart_person_status();
 	bool is_saved(PersonPoint3D point);
-  
-  std::string detectedObject_;
-  std::string TopicID;
-  std::string workingFrameId_;
+	int get_zone(PersonPoint3D point);
+	PersonPoint3D get_3d_map_point();
+	
+
+	std::string detectedObject_;
+	std::string TopicID;
+	std::string workingFrameId_;
+	std::string objectTfName_;
 };
 }  // namespace tayfinder
 

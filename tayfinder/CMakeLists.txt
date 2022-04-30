@@ -68,7 +68,9 @@ add_library(BT_is_any_mate_finder SHARED src/find_mate_BT/Is_any_mate.cpp)
 add_library(BT_move_node_finder SHARED src/back_home_BT/Move.cpp)
 add_library(BT_recovery_node_finder SHARED src/back_home_BT/Recovery.cpp)
 add_library(BT_say_data_finder SHARED src/back_home_BT/Say_data.cpp)
-add_library(${PROJECT_NAME}  src/person_localization/PersonLocalizator.cpp)
+add_library(${PROJECT_NAME}  
+src/person_localization/PersonLocalizator.cpp
+src/person_localization/BbxsTo3D.cpp)
 
 list(APPEND plugin_libs
   BT_move_node_finder
@@ -90,6 +92,8 @@ target_link_libraries(find_my_mates ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
 add_executable(person_localizator src/person_localizator.cpp)
 target_link_libraries(person_localizator ${PROJECT_NAME} ${catkin_LIBRARIES})
 
+add_executable(bbxs_to_3dpoint src/bbxs_to_3dpoint.cpp)
+target_link_libraries(bbxs_to_3dpoint ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 roslint_cpp(
   src/find_my_mates.cpp
