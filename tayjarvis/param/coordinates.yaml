@@ -10,3 +10,7 @@ orient_w0: 0.1 # 0.68
 # Set_goal_node
 tf_to_pos_topic: /tayros/tf_to_poses
 set_goal_activation_topic: /tay_ros/set_goal_activation
+
+activation_topic: /tayros/pointer_detector_activation
+suticase_side_topic: /tayros/suitcase_side
+bbx_reset_topic: /tayros/bbx_reset

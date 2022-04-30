@@ -2,7 +2,7 @@
      <BehaviorTree ID="personRecognize">
 
         <Sequence name="root_sequence">
-            <Welcome_human name="Welcome_human"/>
+            <!--<Welcome_human name="Welcome_human"/> -->
             <!-- <say_instruction name="recognize" mode="{instruct}"/>  -->
             <Localize_suitcase name="Localize_suitcase"/>
         </Sequence>

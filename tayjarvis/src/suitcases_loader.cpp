@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(10);
 
-  int state = FOLLOWING;
+  int state = RECOGNIZE;
   bool finish = false;
 
   /* Bt sequence */
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
     case FOLLOWING:
       if (follow.rootNode()->executeTick() == BT::NodeStatus::SUCCESS)
       {
-        //state = GOING_HOME;      
+        //state = GOING_HOME;
         finish = true;
       }
       break;
