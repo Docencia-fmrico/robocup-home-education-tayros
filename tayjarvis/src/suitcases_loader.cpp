@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(10);
 
-  int state = RECOGNIZE;
+  int state = FOLLOWING;
   bool finish = false;
 
   /* Bt sequence */

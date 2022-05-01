@@ -4,6 +4,7 @@
 #include "std_msgs/Int32.h"
 #include "ros/ros.h"
 #include <unistd.h>
+#include "dialog_cbs/dialog_cbs.h"
 
 enum
 {
@@ -34,8 +35,18 @@ target_reached::tick()
   state.data = STOP;
   act_pub_.publish(state);
 
-
-  ROS_INFO("Where I am?????????????????");
+  if (first_execute == 0)
+  {
+    litsener.movementIndications();
+    first_execute = 1;
+  }
+  
+  ROS_INFO("Litsening...");
+  if (litsener.isCarReached() == "true")
+  {
+      return BT::NodeStatus::SUCCESS;
+  }
+  
   return BT::NodeStatus::FAILURE;
 }  
 
