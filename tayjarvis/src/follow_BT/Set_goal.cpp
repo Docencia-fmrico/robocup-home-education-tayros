@@ -17,17 +17,17 @@ namespace follow_BT
 SetGoal::SetGoal(const std::string& name,  const BT::NodeConfiguration & config)
 : BT::ActionNodeBase(name, config), nh_("~")
 {
-  std::string pos_subscriptor =  nh_.param("tf_to_pos_topic", std::string("/tayros/tf_to_poses"));
+  std::string pos_subscriptor =  nh_.param("target_pos_topic", std::string("/tayros/pose_to_go"));
   std::string activation_pub =  nh_.param("set_goal_activation_topic", std::string("tay_ros/set_goal_activation"));
   
   act_pub_ = nh_.advertise<std_msgs::Int32>(activation_pub, 1);
   pos_sub_ =  nh_.subscribe<move_base_msgs::MoveBaseGoal>(pos_subscriptor, 1, &SetGoal::callback, this);
+  counter = 0.0;
 }
 
 void
 SetGoal::halt()
 {
- // ROS_INFO("SetGoal halt");
 }
 
 BT::NodeStatus
@@ -37,8 +37,14 @@ SetGoal::tick()
   state.data = GO;
   act_pub_.publish(state);
 
+  /* ------------------------ Depuration ------------------------ */
+ /* goal_.target_pose.pose.position.x = counter+= 0.01;
+  goal_.target_pose.pose.position.y = -3.0;
+  goal_.target_pose.header.frame_id = "map";
+  goal_.target_pose.pose.orientation.w = 1.0; */
+
   setOutput<move_base_msgs::MoveBaseGoal>("pos", goal_);
-  return BT::NodeStatus::FAILURE;
+  return BT::NodeStatus::SUCCESS;
 }
 
 void

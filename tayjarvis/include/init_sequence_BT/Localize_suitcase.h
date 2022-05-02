@@ -50,8 +50,13 @@ class Localize_suitcase : public BT::ActionNodeBase
     ros::Subscriber side_sub_;
 
     gb_dialog::DialogManager speaker_;
+    std_msgs::Int32 activation_, bbx_reset_;
+    double current_time_, last_time_, waiting_time_;
 
     int position_;
+    int counter_, max_requests_;
+    int turning_time_;
+    float turning_velocity_;
     const int RIGHT = 0;
     const int LEFT = 1;
     const int TRUE = 1;

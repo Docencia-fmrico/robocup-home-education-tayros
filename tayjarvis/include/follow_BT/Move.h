@@ -18,7 +18,7 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
+#include "ros/ros.h"
 #include <move_base_msgs/MoveBaseAction.h>
 #include "follow_BT/BTNavAction.h"
 
@@ -47,6 +47,9 @@ class Move : public BTNavAction
     bool is_same_goal(move_base_msgs::MoveBaseGoal goal);
 
     int counter_;
+    double current_time_;
+    double last_time_;
+    float TIME_PER_GOAL = 0.3;
     
     float posX_;
     float posY_;

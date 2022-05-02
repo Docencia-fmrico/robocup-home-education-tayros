@@ -3,7 +3,7 @@
 
         <Sequence name="root_sequence">
             
-            <!--<Welcome_human name="Welcome_human"/> -->
+            <Welcome_human name="Welcome_human"/>
             <!--Move to somewhere¿?-->
             <Localize_suitcase name="Localize_suitcase"/>
             <!--Move to arbi¿?-->

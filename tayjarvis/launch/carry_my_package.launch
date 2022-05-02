@@ -1,9 +1,33 @@
 <launch>
 
+<!--Launcher needed-->
+<!--Ros launch robots kobuki_rplidar_astra-->
+
+<!--Launch sound_play soundplay_node.py-->
+
+
+                              <!--Navigation-->
+     <!--Gazebo-->
 <!--<include file="$(find navigation)/launch/navigation.launch"/>-->
-<!--<include file="$(find taynav)/launch/navigation.launch"/>-->
 
+     <!--Real-->
+<include file="$(find taynav)/launch/navigation.launch"/>
 
+                              <!--Vision-->
+<include file="$(find tayvision)/launch/bbx_color_detection.launch"/>
+<include file="$(find tayvision)/launch/bbx_pointing_detection.launch"/>
+<include file="$(find tayvision)/launch/bbx_filter.launch"/>
+
+                              <!--Person localization -->
+<node pkg="taynav" type="tf_to_goal" name="tf_to_goal">
+     <rosparam command="load" file="$(find tayjarvis)/param/coordinates.yaml"/>
+</node>
+
+<node pkg="tayjarvis" type="set_route_node" name="set_route_node">
+     <rosparam command="load" file="$(find tayjarvis)/param/coordinates.yaml"/>
+</node> 
+
+                              <!--Behavior tree-->
 <node pkg="tayjarvis" type="suitcases_loader" name="suitcases_loader" output="screen"> 
     <rosparam command="load" file="$(find tayjarvis)/param/coordinates.yaml"/>
 </node>

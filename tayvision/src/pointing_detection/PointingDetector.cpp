@@ -32,23 +32,23 @@ PointingDetector::PointingDetector()
 : nh(),
   workingFrameId_("/base_footprint"),
   detectedObject_("person"),
-  image_depth_sub(nh, "/camera/rgb/image_raw", 1),
+  image_depth_sub(nh, "/usb_cam/image_raw", 1),
   bbx_sub(nh, "/darknet_ros/bounding_boxes", 1),
   sync_bbx(MySyncPolicy_bbx(10), image_depth_sub, bbx_sub)
   {
     sync_bbx.registerCallback(boost::bind(&PointingDetector::callback_bbx, this, _1, _2));
     last_distance_ = -1;
     restart_counter = 0;
-    pointing_activation = true;
+    pointing_activation = false;
     pointing_ticks_counter = 0;
-    bbx_restart = true;
+    bbx_restart = false;
 
     std::string act_sub = nh.param("activation_topic", std::string("/tayros/pointer_detector_activation"));
     std::string Bbx_sub = nh.param("bbx_reset_topic", std::string("/tayros/bbx_reset"));
     std::string side_pub = nh.param("suticase_side_topic", std::string("/tayros/suitcase_side"));
     
     
-    suitcase_side_ = nh.advertise<std_msgs::Bool>(side_pub, 1);
+    suitcase_side_ = nh.advertise<std_msgs::Int32>(side_pub, 1);
     activation_sub_ =  nh.subscribe<std_msgs::Int32>(act_sub, 1, &PointingDetector::activation_callback, this);
     bbx_restart_sub_ = nh.subscribe<std_msgs::Int32>(Bbx_sub, 1, &PointingDetector::bbx_restart_callback, this);
   }
@@ -63,7 +63,7 @@ void PointingDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
 
     try
     {
-        img_ptr_depth = cv_bridge::toCvCopy(*image, sensor_msgs::image_encodings::TYPE_32FC1);
+        //img_ptr_depth = cv_bridge::toCvCopy(*image, sensor_msgs::image_encodings::TYPE_32FC1);
     }
     catch (cv_bridge::Exception& e)
     {
@@ -77,10 +77,10 @@ void PointingDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
       int px = (box.xmax + box.xmin) / 2;
       int py = (box.ymax + box.ymin) / 2;
 
-      //float dist = 1;
-      //float ang = 0;
-      float dist = img_ptr_depth->image.at<float>(cv::Point(px, py)) * 0.001f; // * 0.001f
-      float ang = -(px - CAMERA_XCENTER_) / CAMERA_XCENTER_;
+      float dist = 1;
+      float ang = 0;
+      //float dist = img_ptr_depth->image.at<float>(cv::Point(px, py)) * 0.001f; // * 0.001f
+      //float ang = -(px - CAMERA_XCENTER_) / CAMERA_XCENTER_;
 
 
       if (last_distance_ < 0 || isnan(last_distance_) || isnan(last_angle_) || restart_counter > RESTART_TICKS_)
@@ -112,7 +112,7 @@ void PointingDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
           bbx_restart = false; //DEBUG
         }
 
-        if(pointing_activation){
+        if(pointing_activation == TRUE){
 
           int left_diff = last_px_min_ - box.xmin;
           int rigth_diff = box.xmax - last_px_max_;

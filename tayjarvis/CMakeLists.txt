@@ -56,8 +56,8 @@ include_directories(
 # Follow BTnodes
 add_library(BT_move_node SHARED src/follow_BT/Move.cpp)
 add_library(BT_target_reached SHARED src/follow_BT/target_reached.cpp)
-add_library(BT_recovery SHARED src/follow_BT/Recovery.cpp)
 add_library(BT_follow SHARED src/follow_BT/Follow.cpp)
+add_library(BT_set_goal SHARED src/follow_BT/Set_goal.cpp)
 
 # Person_recognize BT nodes
 add_library(BT_welcome_human SHARED src/init_sequence_BT/Welcome_human.cpp)
@@ -65,10 +65,10 @@ add_library(BT_localize_suitcase SHARED src/init_sequence_BT/Localize_suitcase.c
 add_library(BT_recognize SHARED src/init_sequence_BT/Recognize.cpp)
 
 list(APPEND plugin_libs
-  BT_recovery
   BT_move_node
   BT_target_reached
   BT_follow
+  BT_set_goal
 
   BT_localize_suitcase
   BT_welcome_human
