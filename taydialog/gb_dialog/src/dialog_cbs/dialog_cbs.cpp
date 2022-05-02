@@ -57,6 +57,7 @@ DialogManager::DialogManager()
       "pointBagDialog");
   pointedBag_ = "none";
   carReached_ = false;
+  questionAsked_ = false;
 }
 
 void
@@ -69,78 +70,85 @@ void
 DialogManager::welcomeHuman()
 {
   ROS_INFO("[TAY_DIALOG] welcomeHumanCB:");
-  speak("Hi_human._Welcome_to_Carry_My_Luggage_Test.");
+  speak("Hi human. Welcome to Carry My Luggage test.");
   ros::Duration(5, 0).sleep();
-  speak("My_name_is_TayBot.");
+  speak("My name is TayBot.");
   ros::Duration(2, 0).sleep();
-  speak("I_will_help_you_carrying_your_lugagge");
+  speak("I will help you carrying your luggage");
   ros::Duration(4, 0).sleep();
-  speak("Please,_follow_my_indications_so_I_can_help_you_doing_the_task.");
+  speak("Please, follow my indications so I can help you doing the task.");
   ros::Duration(6, 0).sleep();
 }
 
 void
-DialogManager::pointBag()
+DialogManager::pointBag(int listenFlag)
 {
   ROS_INFO("[TAY_DIALOG] pointBag:");
-  speak("Please,_point_the_bag_you_want_me_to_carry.");
+  speak("Please, point the bag you want me to carry.");
   ros::Duration(4, 0).sleep();
-  while(ros::ok())
+  if(listenFlag)
   {
-    listen();
+    while(ros::ok())
+    {
+      if(!questionAsked_)
+      {
+        listen();
+      }
+      if(pointedBag_ != "none")
+      {
+        break;
+      }
+      ros::spinOnce();
+    }
     std::cerr << "[TAY_DIALOG] direction: " << pointedBag_ << std::endl;
-    if(pointedBag_ == "none")
-    {
-      speak("I_didn't_understand_you._Which_one_did_you_say:_the_one_from_my_left_or_the_one_from_my_right?");
-      ros::Duration(7,0).sleep();
-    }
-    else
-    {
-      break;
-    }
-    ros::spinOnce();
+    std::string answer = pointedBag_ + "bag selected. Please,put the bag above me so I can carry it.";
+    speak(answer);
+    ros::Duration(10,0).sleep();
+    questionAsked_ = false;
   }
-  std::string answer = pointedBag_ + "bag_selected.Please,_put_your_bag_above_me_so_I_can_carry_it.";
-  speak(answer);
-  ros::Duration(10,0).sleep();
 }
 
 void
 DialogManager::pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result)
 {
   ROS_INFO("[TAY_DIALOG] pointBagDialogCB:");
-  for (const auto & param : result.parameters)
-  {
-    std::cout << "THIS IS THE PARAM:" << param << std::endl;
-    for(const auto & value : param.value)
-    {
-      std::cout << "POINTED BAG ES: " << pointedBag_ << std::endl;
-      std::cout << "\t" << "THIS IS THE VALUE:" << value << std::endl;
-    }
-  }
+  /*
+  --------NOTA IMPORTANTE--------
+  Los posibles valores son:
+  - left
+  - right
+  - your left
+  - your right
+  - my left
+  - my right
+  */
   pointedBag_ = result.fulfillment_text;
+  questionAsked_ = true;
 }
 
 void
 DialogManager::movementIndications()
 {
   ROS_INFO("[TAY_DIALOG] movementIndicationsCB:");
-  speak("I_will_start_following_you.Please_do_not_get_to_far_from_me.");
+  speak("I will start following you. Please do not get to far from me.");
   ros::Duration(5,0).sleep();
-  speak("Once_we_reach_the_car,_please,_say:_STOP");
+  speak("Once we reach the car, please, say: STOP");
   ros::Duration(4,0).sleep();
   while(ros::ok())
   {
-    listen();
-    ros::Duration(3,0).sleep();
+    if(!questionAsked_)
+    {
+      listen();
+    }
     if(isCarReached() == "true")
     {
       break;
     }
     ros::spinOnce();
   }
-  speak("Car_reached._Please,_take_the_bag._I_will_return_to_the_spawnpoint_soon.");
-  ros::Duration(6,0).sleep();
+  speak("Car reached. Please, take the bag. I will return to the spawnpoint soon.");
+  ros::Duration(10,0).sleep();
+  questionAsked_ = false;
 }
 
 void
@@ -148,13 +156,14 @@ DialogManager::carReachedCB(dialogflow_ros_msgs::DialogflowResult result)
 {
   ROS_INFO("[TAY_DIALOG] carReachedCB: intent [%s]", result.intent.c_str());
   carReached_ = result.fulfillment_text;
+  questionAsked_ = true;
 }
   
 void
 DialogManager::gotLostCB()
 {
   ROS_INFO("[TAY_DIALOG] gotLostCB:");
-  speak("I_dont_see_you._Please_,_do_not_move_till_I_find_you.");
+  speak("I dont see you. Please , do not move till I find you.");
   ros::Duration(5, 0).sleep();
 }
 
@@ -162,7 +171,7 @@ void
 DialogManager::end()
 {
     ROS_INFO("[TAY_DIALOG] end");
-    speak("THANKS_FOR_CONSIDERING_ME._I_HOPE_I_WILL_SEE_YOU_SOON");
+    speak("Thanks for cosidering me!");
 }
 
 std::string

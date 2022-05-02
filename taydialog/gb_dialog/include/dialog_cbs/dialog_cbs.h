@@ -32,7 +32,7 @@ public:
     void welcomeIntentCB(dialogflow_ros_msgs::DialogflowResult result);
 
     void welcomeHuman();
-    void pointBag();
+    void pointBag(int listenFlag);
     void movementIndications();
 
     void pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result);
@@ -51,6 +51,7 @@ private:
     std::string pointedBag_;
     std::string carReached_;
 
+    bool questionAsked_;
 
 };
 };  // namespace gb_dialog

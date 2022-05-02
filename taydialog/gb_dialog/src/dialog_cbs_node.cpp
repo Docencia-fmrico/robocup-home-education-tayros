@@ -24,7 +24,7 @@ int main(int argc, char** argv)
   ros::Duration(1, 0).sleep();
 
   forwarder.welcomeHuman();
-  forwarder.pointBag();
+  forwarder.pointBag(1);
   forwarder.movementIndications();
   forwarder.end();
   
