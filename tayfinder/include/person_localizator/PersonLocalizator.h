@@ -26,7 +26,10 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <string>
+#include "ros/ros.h"
 #include <image_geometry/pinhole_camera_model.h>
+#include "taymsgs/person_info.h"
+#include "std_msgs/Int32.h"
 
 namespace tayfinder
 {
@@ -63,16 +66,22 @@ class PersonLocalizator
 public:
   PersonLocalizator();
   void callback_bbx(const sensor_msgs::ImageConstPtr& image, const darknet_ros_msgs::BoundingBoxesConstPtr& boxes);
+  void callback_feedback(const std_msgs::Int32::ConstPtr& id);
+  void publish_person_data();
 
 private:
 	ros::NodeHandle nh;
 	const bool DEBUG = true;
+
+	ros::Publisher person_info_pub_;
+	ros::Subscriber feedback_sub_;
 
 	typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,
 	darknet_ros_msgs::BoundingBoxes> MySyncPolicy_bbx;
 	message_filters::Subscriber<sensor_msgs::Image> image_sub;
 	message_filters::Subscriber<darknet_ros_msgs::BoundingBoxes> bbx_sub;
 	message_filters::Synchronizer<MySyncPolicy_bbx> sync_bbx;
+
 
 	// ---------------- Persons Info --------------- //
 	const int EMPTY = -1;
@@ -92,14 +101,11 @@ private:
 	Zone zones[ZONES_NUMBER];
 	// ---------------- ------------ --------------- //
 
-
-
 	void restart_person_status();
 	bool is_saved(PersonPoint3D point);
 	int get_zone(PersonPoint3D point);
 	PersonPoint3D get_3d_map_point();
 	
-
 	std::string detectedObject_;
 	std::string TopicID;
 	std::string workingFrameId_;

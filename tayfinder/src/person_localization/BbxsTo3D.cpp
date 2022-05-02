@@ -67,8 +67,8 @@ void BbxsTo3D::callback_bbx(const sensor_msgs::ImageConstPtr& image,
     if (box.Class == detectedObject_  && cam_info_taked)
     {
 			int px = (box.xmax + box.xmin) / 2;
-    	int py = (box.ymax + box.ymin) / 2;
-			float dist = img_ptr_depth->image.at<float>(cv::Point(px, py)); // * 0.001f
+    		int py = (box.ymax + box.ymin) / 2;
+			float dist = img_ptr_depth->image.at<float>(cv::Point(px, py)* 0.001f); // * 0.001f
 
 			cv::Point2d pixel_point(px, py);
 			cv::Point3d xyz = cam_model_.projectPixelTo3dRay(pixel_point);

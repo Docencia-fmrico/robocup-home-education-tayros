@@ -21,11 +21,22 @@
 #include <darknet_ros_msgs/BoundingBoxes.h>
 #include "person_localizator/PersonLocalizator.h"
 #include <image_geometry/pinhole_camera_model.h>
+#include "taymsgs/person_info.h"
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "person_localizator");
   tayfinder::PersonLocalizator person_localizator;
+
+  ros::Rate loop_rate(20);
+  while (ros::ok())
+  {
+    person_localizator.publish_person_data();
+
+    ros::spinOnce();
+    loop_rate.sleep();
+  }
+
   ros::spin();
   return 0;
 }

@@ -31,6 +31,8 @@
 #include "tf2_ros/transform_listener.h"
 #include "tf2/LinearMath/Transform.h"
 #include "ros/ros.h"
+#include "std_msgs/Int32.h"
+#include "taymsgs/person_info.h"
 
 namespace tayfinder
 {
@@ -44,29 +46,31 @@ PersonLocalizator::PersonLocalizator():
   sync_bbx(MySyncPolicy_bbx(10), image_sub, bbx_sub)
   {
     sync_bbx.registerCallback(boost::bind(&PersonLocalizator::callback_bbx, this, _1, _2));
+    feedback_sub_ = nh.subscribe<std_msgs::Int32>("/tayros/person/feedback", 10, &PersonLocalizator::callback_feedback, this);
+    person_info_pub_ = nh.advertise<taymsgs::person_info>("/tayros/person_info", 1);
     restart_person_status();
 
-	zones[0].id = KITCHEN;
-	zones[0].name = "KITCHEN";
-	zones[0].minX = -0.41896533966064453;
-	zones[0].maxX = 1.6929583549499512;
-	zones[0].minY = 1.2567211389541626;
-	zones[0].maxY = 4.463983535766602;
+    zones[0].id = KITCHEN;
+    zones[0].name = "KITCHEN";
+    zones[0].minX = -0.41896533966064453;
+    zones[0].maxX = 1.6929583549499512;
+    zones[0].minY = 1.2567211389541626;
+    zones[0].maxY = 4.463983535766602;
 
-	zones[1].id = BATHROOM;
-	zones[1].name = "BATHROOM"; // Room in the simulator
-	zones[1].minX = -0.362093448638916;
-	zones[1].maxX = 3.0790772438049316;
-	zones[1].minY = 4.7487382888793945;
-	zones[1].maxY = 8.862476348876953;
+    zones[1].id = BATHROOM;
+    zones[1].name = "BATHROOM"; // Room in the simulator
+    zones[1].minX = -0.362093448638916;
+    zones[1].maxX = 3.0790772438049316;
+    zones[1].minY = 4.7487382888793945;
+    zones[1].maxY = 8.862476348876953;
 
 
-	zones[2].id = LIVING;
-	zones[2].name = "LIVING";
-	zones[2].minX = 1.276754379272461;
-	zones[2].maxX = 8.677393913269043;
-	zones[2].minY = -0.7209274768829346;
-	zones[2].maxY = 6.329730987548828;
+    zones[2].id = LIVING;
+    zones[2].name = "LIVING";
+    zones[2].minX = 1.276754379272461;
+    zones[2].maxX = 8.677393913269043;
+    zones[2].minY = -0.7209274768829346;
+    zones[2].maxY = 6.329730987548828;
 
   }
 
@@ -126,7 +130,41 @@ void PersonLocalizator::callback_bbx(const sensor_msgs::ImageConstPtr& image,
 }
 
 
-void PersonLocalizator::restart_person_status(){
+void 
+PersonLocalizator::callback_feedback(const std_msgs::Int32::ConstPtr& id){
+  person_list[id->data].status = STUDIED;
+}
+
+
+void 
+PersonLocalizator::publish_person_data(){
+
+  taymsgs::person_info current_person;
+
+  for(int i = 0; i < PERSON_BUFFER; i++){
+    if(person_list[i].status != EMPTY && person_list[i].status == NOT_STUDIED){
+        
+      current_person.position.target_pose.header.frame_id = "map";
+      current_person.position.target_pose.pose.position.x = person_list[i].x;
+      current_person.position.target_pose.pose.position.y = person_list[i].y;
+      current_person.position.target_pose.pose.position.z = person_list[i].z;
+      current_person.position.target_pose.pose.orientation.x = 0;
+      current_person.position.target_pose.pose.orientation.y = 0;
+      current_person.position.target_pose.pose.orientation.z = 0;
+      current_person.position.target_pose.pose.orientation.w = 1.0;
+      
+      current_person.id = i;
+      current_person.zone = person_list[i].zone;
+      person_info_pub_.publish(current_person);
+      return;
+    }
+  }
+  return;
+}
+
+
+void 
+PersonLocalizator::restart_person_status(){
 
     for(int i = 0; i < PERSON_BUFFER; i++){
         person_list[i].status = EMPTY;

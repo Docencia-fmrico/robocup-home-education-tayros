@@ -28,6 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   darknet_ros_msgs
   image_geometry
+  taymsgs
 )
 
 find_package(OpenCV)
@@ -52,6 +53,7 @@ LIBRARIES
     pcl_conversions
     pcl_ros
     image_geometry
+    taymsgs
 )
 
 include_directories(
