@@ -49,10 +49,18 @@ include_directories(
   ${ZMQ_INCLUDE_DIRS}
 )
 
-add_executable(set_goal_node src/set_goal_node.cpp)
-target_link_libraries(set_goal_node ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
+
+
+add_executable(tf_to_goal_node src/tf_to_goal.cpp)
+target_link_libraries(tf_to_goal_node ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
+
+add_library(${PROJECT_NAME} 
+src/Set_route/set_route.cpp
+)
+add_executable(set_route_node src/set_route_node.cpp)
+target_link_libraries(set_route_node  ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
 roslint_cpp(
-  src/set_goal_node.cpp
+  src/tf_to_goal.cpp
 )

@@ -87,18 +87,12 @@ add_executable(suitcases_loader
 )
 target_link_libraries(suitcases_loader ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
 
-add_library(${PROJECT_NAME} 
-src/Set_route/set_route.cpp
-)
-
 add_executable(movement src/follow/Movement.cpp)
 target_link_libraries(movement ${catkin_LIBRARIES} ${ZMQ_LIBRARIES})
 
-add_executable(set_route_node src/set_route_node.cpp)
-target_link_libraries(set_route_node  ${PROJECT_NAME} ${catkin_LIBRARIES})
+
 
 roslint_cpp(
   src/suitcases_loader.cpp
-  src/set_route_node.cpp
   src/follow/Movement.cpp
 )

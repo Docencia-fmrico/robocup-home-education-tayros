@@ -23,7 +23,7 @@
      <rosparam command="load" file="$(find tayjarvis)/param/coordinates.yaml"/>
 </node>
 
-<node pkg="tayjarvis" type="set_route_node" name="set_route_node">
+<node pkg="taynav" type="set_route_node" name="set_route_node">
      <rosparam command="load" file="$(find tayjarvis)/param/coordinates.yaml"/>
 </node> 
 
