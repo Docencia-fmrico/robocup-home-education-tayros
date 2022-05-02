@@ -33,12 +33,17 @@ public:
 
     void welcomeHuman();
     void pointBag(int listenFlag);
+    void startNav();
     void movementIndications();
 
     void pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result);
+    void startNavCB(dialogflow_ros_msgs::DialogflowResult result);
     void carReachedCB(dialogflow_ros_msgs::DialogflowResult result);
 
     void end();
+
+    void askName();
+    void askNameCB();
 
     void gotLostCB();
 
@@ -49,6 +54,7 @@ private:
     ros::NodeHandle nh_;
 
     std::string pointedBag_;
+    std::string readyToMove_;
     std::string carReached_;
 
     bool questionAsked_;

@@ -25,6 +25,7 @@ int main(int argc, char** argv)
 
   forwarder.welcomeHuman();
   forwarder.pointBag(1);
+  forwarder.startNav();
   forwarder.movementIndications();
   forwarder.end();
   

@@ -55,8 +55,12 @@ DialogManager::DialogManager()
   this->registerCallback(
       std::bind(&DialogManager::pointBagDialogCB, this, ph::_1),
       "pointBagDialog");
+  this->registerCallback(
+      std::bind(&DialogManager::startNavCB, this, ph::_1),
+      "readyToMove");
   pointedBag_ = "none";
-  carReached_ = false;
+  carReached_ = "false";
+  readyToMove_ = "false";
   questionAsked_ = false;
 }
 
@@ -84,10 +88,15 @@ void
 DialogManager::pointBag(int listenFlag)
 {
   ROS_INFO("[TAY_DIALOG] pointBag:");
-  speak("Please, point the bag you want me to carry.");
-  ros::Duration(4, 0).sleep();
-  if(listenFlag)
+  if(listenFlag == 0)
   {
+      speak("Please, point the bag you want me to carry.");
+    ros::Duration(4, 0).sleep();
+  }
+  else
+  {
+    speak("Please, say which bag you want me to carry: left or right?");
+    ros::Duration(5, 0).sleep();
     while(ros::ok())
     {
       if(!questionAsked_)
@@ -103,7 +112,7 @@ DialogManager::pointBag(int listenFlag)
     std::cerr << "[TAY_DIALOG] direction: " << pointedBag_ << std::endl;
     std::string answer = pointedBag_ + "bag selected. Please,put the bag above me so I can carry it.";
     speak(answer);
-    ros::Duration(10,0).sleep();
+    ros::Duration(7,0).sleep();
     questionAsked_ = false;
   }
 }
@@ -127,6 +136,34 @@ DialogManager::pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result)
 }
 
 void
+DialogManager::startNav()
+{
+  speak("Once your are ready to start the journey, say: START");
+  ros::Duration(5, 0).sleep();
+  while(ros::ok())
+  {
+    if(!questionAsked_)
+    {
+      listen();
+    }
+    if(readyToMove_ == "true")
+    {
+      break;
+    }
+      ros::spinOnce();
+  }
+  questionAsked_ = false;
+}
+
+void
+DialogManager::startNavCB(dialogflow_ros_msgs::DialogflowResult result)
+{
+  ROS_INFO("[TAY_DIALOG] startNavCB:");
+  readyToMove_ = result.fulfillment_text;
+  questionAsked_ = true;
+}
+
+void
 DialogManager::movementIndications()
 {
   ROS_INFO("[TAY_DIALOG] movementIndicationsCB:");
@@ -140,7 +177,7 @@ DialogManager::movementIndications()
     {
       listen();
     }
-    if(isCarReached() == "true")
+    if(carReached_ == "true")
     {
       break;
     }
