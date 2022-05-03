@@ -23,11 +23,16 @@ int main(int argc, char** argv)
   // No quitar este sleep que si no NO DA TIEMPO AL CONSTRUCTOR
   ros::Duration(1, 0).sleep();
 
-  forwarder.welcomeHuman();
-  forwarder.pointBag(1);
-  forwarder.startNav();
-  forwarder.movementIndications();
-  forwarder.end();
+  // Métodos para la prueba de Find My Mates
+  // forwarder.welcomeHumanFMM();
+  // forwarder.askForName();
+
+  // Métodos para la prueba de Carry My Luggage
+  // forwarder.welcomeHumanCML();
+  // forwarder.pointBag(1);
+  // forwarder.startNav();
+  // forwarder.movementIndications();
+  // forwarder.end();
   
   ros::spin();
   return 0;

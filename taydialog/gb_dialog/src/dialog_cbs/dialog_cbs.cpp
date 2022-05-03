@@ -53,6 +53,9 @@ DialogManager::DialogManager()
       std::bind(&DialogManager::carReachedCB, this, ph::_1),
       "carReached");
   this->registerCallback(
+      std::bind(&DialogManager::askForNameCB, this, ph::_1),
+      "askForName");
+  this->registerCallback(
       std::bind(&DialogManager::pointBagDialogCB, this, ph::_1),
       "pointBagDialog");
   this->registerCallback(
@@ -61,17 +64,17 @@ DialogManager::DialogManager()
   pointedBag_ = "none";
   carReached_ = "false";
   readyToMove_ = "false";
+  personName_ = "none";
   questionAsked_ = false;
 }
 
 void
 DialogManager::noIntentCB(dialogflow_ros_msgs::DialogflowResult result)
 {
-  ROS_INFO("[TAY_DIALOG] noIntentCB: intent [%s]", result.intent.c_str());
 }
 
 void
-DialogManager::welcomeHuman()
+DialogManager::welcomeHumanCML()
 {
   ROS_INFO("[TAY_DIALOG] welcomeHumanCB:");
   speak("Hi human. Welcome to Carry My Luggage test.");
@@ -109,7 +112,9 @@ DialogManager::pointBag(int listenFlag)
       }
       ros::spinOnce();
     }
-    std::cerr << "[TAY_DIALOG] direction: " << pointedBag_ << std::endl;
+    std::cout << "-------------------------------------------------" << std::endl;
+    std::cout << "[TAY_DIALOG] direction: " << pointedBag_ << std::endl;
+    std::cout << "-------------------------------------------------" << std::endl;
     std::string answer = pointedBag_ + "bag selected. Please,put the bag above me so I can carry it.";
     speak(answer);
     ros::Duration(7,0).sleep();
@@ -138,6 +143,7 @@ DialogManager::pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result)
 void
 DialogManager::startNav()
 {
+  ROS_INFO("[TAY_DIALOG] startNav:");
   speak("Once your are ready to start the journey, say: START");
   ros::Duration(5, 0).sleep();
   while(ros::ok())
@@ -202,6 +208,56 @@ DialogManager::gotLostCB()
   ROS_INFO("[TAY_DIALOG] gotLostCB:");
   speak("I dont see you. Please , do not move till I find you.");
   ros::Duration(5, 0).sleep();
+}
+
+void
+DialogManager::welcomeHumanFMM()
+{
+  ROS_INFO("[TAY_DIALOG] welcomeHumanCB:");
+  speak("Hi human. Welcome to Find My Mates test.");
+  ros::Duration(5, 0).sleep();
+  speak("My name is TayBot.");
+  ros::Duration(2, 0).sleep();
+  speak("I will help you finding your mates");
+  ros::Duration(3, 0).sleep();
+  speak("Please, follow my indications so I can help you doing the task.");
+  ros::Duration(6, 0).sleep();
+  speak("Do not move from here, I will come in a few minutes.");
+  ros::Duration(6,0).sleep();
+}
+
+void
+DialogManager::askForName()
+{
+  ROS_INFO("[TAY_DIALOG] askForName:");
+  speak("Hi there, what is your name?");
+  ros::Duration(3,0).sleep();
+  while(ros::ok())
+  {
+    if(!questionAsked_)
+    {
+      listen();
+    }
+    if(personName_ != "none")
+    {
+      break;
+    }
+    ros::spinOnce();
+  }
+  questionAsked_ = false;
+  std::cout << "-------------------------------------------------" << std::endl;
+  std::cout << "[TAY_DIALOG] person name is: " << personName_ << std::endl;
+  std::cout << "-------------------------------------------------" << std::endl;
+  speak("Hi there " + personName_ + ", please do not move from here");
+  ros::Duration(4,0).sleep();
+}
+    
+void
+DialogManager::askForNameCB(dialogflow_ros_msgs::DialogflowResult result)
+{
+  ROS_INFO("[TAY_DIALOG] askForNameCB:");
+  personName_ = result.fulfillment_text;
+  questionAsked_ = true;
 }
 
 void

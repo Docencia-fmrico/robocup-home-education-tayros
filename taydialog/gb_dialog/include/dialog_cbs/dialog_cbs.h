@@ -31,19 +31,19 @@ public:
     void noIntentCB(dialogflow_ros_msgs::DialogflowResult result);
     void welcomeIntentCB(dialogflow_ros_msgs::DialogflowResult result);
 
-    void welcomeHuman();
+    void welcomeHumanCML();
+    void welcomeHumanFMM();
     void pointBag(int listenFlag);
     void startNav();
     void movementIndications();
+    void askForName();
+    void askForNameCB(dialogflow_ros_msgs::DialogflowResult result);
 
     void pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result);
     void startNavCB(dialogflow_ros_msgs::DialogflowResult result);
     void carReachedCB(dialogflow_ros_msgs::DialogflowResult result);
 
     void end();
-
-    void askName();
-    void askNameCB();
 
     void gotLostCB();
 
@@ -56,6 +56,7 @@ private:
     std::string pointedBag_;
     std::string readyToMove_;
     std::string carReached_;
+    std::string personName_;
 
     bool questionAsked_;
 
