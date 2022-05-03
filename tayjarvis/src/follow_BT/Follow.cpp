@@ -18,7 +18,6 @@ Follow::Follow(const std::string& name,  const BT::NodeConfiguration & config)
 : BT::ActionNodeBase(name, config), nh_("~")
 {
   std::string activation_pub =  nh_.param("set_goal_activation_topic", std::string("/tay_ros/set_goal_activation"));
-  
   act_pub_ = nh_.advertise<std_msgs::Int32>(activation_pub, 1);
 }
 

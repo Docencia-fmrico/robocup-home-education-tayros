@@ -4,6 +4,7 @@
 #include "ros/ros.h"
 #include <unistd.h>
 #include "std_msgs/Int32.h"
+#include "dialog_cbs/dialog_cbs.h"
 
 namespace person_recognize
 {
@@ -22,7 +23,9 @@ Welcome_human::halt()
 BT::NodeStatus
 Welcome_human::tick()
 {
-  ROS_INFO("Hola ser inferior");
+  gb_dialog::DialogManager speaker;
+  speaker.welcomeHuman();
+  
   return BT::NodeStatus::SUCCESS;
 }  
 

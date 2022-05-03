@@ -20,6 +20,7 @@
 
 #include "actionlib/client/simple_action_client.h"
 #include "move_base_msgs/MoveBaseAction.h"
+#include "dialog_cbs/dialog_cbs.h"
 
 namespace follow_BT
 {
@@ -40,6 +41,7 @@ public:
     nav_need_send_goal_ = true;;
     nav_finished_ = false;
     nav_succeded_ = false;
+    
   }
 
   virtual void on_halt() = 0;
@@ -100,6 +102,8 @@ public:
       }
       else
       {
+        gb_dialog::DialogManager speaker;
+        speaker.gotLostCB();
         return BT::NodeStatus::FAILURE;
       }
     }

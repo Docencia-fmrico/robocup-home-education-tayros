@@ -48,6 +48,8 @@ class SetGoal : public BT::ActionNodeBase
     void callback(const move_base_msgs::MoveBaseGoal::ConstPtr& msg);
 
     move_base_msgs::MoveBaseGoal goal_;
+
+    float counter;
 };
 
 }  // namespace FOLLOW_BT

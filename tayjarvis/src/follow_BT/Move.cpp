@@ -30,6 +30,8 @@ Move::Move(
   const BT::NodeConfiguration & config)
 : BTNavAction(name, action_name, config), counter_(0)
 {
+  current_time_ = 0;
+  last_time_ = 0;
 }
 
 void
@@ -42,45 +44,10 @@ void
 Move::on_start()
 {
   move_base_msgs::MoveBaseGoal Target = getInput<move_base_msgs::MoveBaseGoal>("pos").value();
-  Target.target_pose.header.stamp = ros::Time::now();
+  Target.target_pose.header.frame_id = "map";
   set_goal(Target);
 }
 
-bool
-Move::is_same_goal(move_base_msgs::MoveBaseGoal goal)
-{
-  if (goal.target_pose.pose.position.x != posX_)
-  {
-    return false;
-  }
-  if (goal.target_pose.pose.position.y != posY_)
-  {
-    return false;
-  }
-  if (goal.target_pose.pose.position.z != posZ_)
-  {
-    return false;
-  }
-  
-  if (goal.target_pose.pose.orientation.x != angularX_)
-  {
-    return false;
-  }
-  if (goal.target_pose.pose.orientation.x != angularY_)
-  {
-    return false;
-  }
-  if (goal.target_pose.pose.orientation.x != angularZ_)
-  {
-    return false;
-  }
-  if (goal.target_pose.pose.orientation.x != angularW_)
-  {
-    return false;
-  }
-
-  return true;
-}
 
 BT::NodeStatus
 Move::on_tick()
@@ -88,22 +55,15 @@ Move::on_tick()
   
   move_base_msgs::MoveBaseGoal Target = getInput<move_base_msgs::MoveBaseGoal>("pos").value();
 
-  if (is_same_goal(Target))
-  {
-    std::cerr << "New_goal........" << std::endl;
-    Target.target_pose.header.stamp = ros::Time::now();
-  
-    posX_ = Target.target_pose.pose.position.x;
-    posY_ = Target.target_pose.pose.position.y;
-    posZ_ = Target.target_pose.pose.position.z;
-    angularX_ = Target.target_pose.pose.orientation.x;
-    angularY_ = Target.target_pose.pose.orientation.y;
-    angularZ_ = Target.target_pose.pose.orientation.z;
-    angularW_ = Target.target_pose.pose.orientation.w;
+  current_time_ = ros::Time::now().toSec();
 
+  if (current_time_ - TIME_PER_GOAL >= last_time_)
+  {
     set_goal(Target);
+    last_time_ = current_time_;
   }
-  std::cerr << "Moving" << std::endl;
+  
+  //std::cerr << "Moving" << std::endl;
   return BT::NodeStatus::RUNNING;
 }
 

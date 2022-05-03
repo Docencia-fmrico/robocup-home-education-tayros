@@ -17,10 +17,11 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
+#include "std_msgs/Bool.h"
 #include <string>
 #include "std_msgs/Int32.h"
 #include "ros/ros.h"
+#include "dialog_cbs/dialog_cbs.h"
 
 namespace person_recognize
 {
@@ -31,6 +32,8 @@ class Localize_suitcase : public BT::ActionNodeBase
     explicit Localize_suitcase(const std::string& name, const BT::NodeConfiguration& config);
 
     void halt() override;
+    void side_callback(const std_msgs::Int32::ConstPtr& msg);
+    void turnTo(int pos);
 
     BT::NodeStatus tick() override;
 
@@ -41,6 +44,23 @@ class Localize_suitcase : public BT::ActionNodeBase
 
   private: 
     ros::NodeHandle nh_;
+    ros::Publisher activation_pub_;
+    ros::Publisher pub_vel_;
+    ros::Publisher pub_bbx_restart_;
+    ros::Subscriber side_sub_;
+
+    gb_dialog::DialogManager speaker_;
+    std_msgs::Int32 activation_, bbx_reset_;
+    double current_time_, last_time_, waiting_time_;
+
+    int position_;
+    int counter_, max_requests_;
+    int turning_time_;
+    float turning_velocity_;
+    const int RIGHT = 0;
+    const int LEFT = 1;
+    const int TRUE = 1;
+    const int FALSE = 0;
 };
 
 }  // namespace PERSON_RECOGNIZE

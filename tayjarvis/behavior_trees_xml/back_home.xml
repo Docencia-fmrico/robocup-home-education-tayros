@@ -1,10 +1,5 @@
  <root main_tree_to_execute = "backHome" >
      <BehaviorTree ID="backHome">
-
-        <ReactiveFallback name="root_fallback">
-            <Move name="goHome" pos="{Home}"/>  <!--Always true-->
-            <Recovery name="recovery"/>
-        </ReactiveFallback>
-
+        <Move name="goHome" pos="{Home}"/>  <!--Always true-->
      </BehaviorTree>
  </root>

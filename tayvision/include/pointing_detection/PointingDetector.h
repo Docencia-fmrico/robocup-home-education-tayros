@@ -17,9 +17,12 @@
 
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
+#include "std_msgs/Int32.h"
+#include "std_msgs/Bool.h"
 #include <message_filters/sync_policies/approximate_time.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/Image.h>
+#include "ros/ros.h"
 #include <darknet_ros_msgs/BoundingBoxes.h>
 #include <string>
 
@@ -31,9 +34,19 @@ class PointingDetector
 public:
   PointingDetector();
   void callback_bbx(const sensor_msgs::ImageConstPtr& image, const darknet_ros_msgs::BoundingBoxesConstPtr& boxes);
+  void activation_callback(const std_msgs::Int32::ConstPtr& msg);
+  void bbx_restart_callback(const std_msgs::Int32::ConstPtr& msg);
   
 private:
   ros::NodeHandle nh;
+  ros::Publisher suitcase_side_;
+  ros::Subscriber activation_sub_;
+  ros::Subscriber bbx_restart_sub_;
+  
+  const int RIGHT = 0;
+  const int LEFT = 1;
+  const int TRUE = 1;
+  const int FALSE = 0;
 
   typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,
   darknet_ros_msgs::BoundingBoxes> MySyncPolicy_bbx;
@@ -50,7 +63,6 @@ private:
   float last_distance_;  // Save last distance measured
   float last_angle_;
   int restart_counter;
-  bool bbx_restart;
 	// ------------------- ------------------- -------------------- //
 
 
@@ -63,8 +75,9 @@ private:
 
   int last_px_min_;  // Save last distance measured(to calculate pointing direction)
   int last_px_max_; 
-  bool pointing_activation;
   int pointing_ticks_counter;
+  bool pointing_activation;
+  bool bbx_restart;
   // --------------------- -------- --------------------- //
 
   std::string detectedObject_;

@@ -46,7 +46,7 @@ int main(int argc, char **argv)
   factory.registerFromPlugin(loader.getOSName("BT_follow"));
   factory.registerFromPlugin(loader.getOSName("BT_target_reached"));
   factory.registerFromPlugin(loader.getOSName("BT_recognize"));
- factory.registerFromPlugin(loader.getOSName("BT_recovery"));
+  factory.registerFromPlugin(loader.getOSName("BT_set_goal"));
 
   //factory.registerFromPlugin(loader.getOSName("BT_recognize"));
   factory.registerFromPlugin(loader.getOSName("BT_welcome_human"));
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(10);
 
-  int state = FOLLOWING;
+  int state = RECOGNIZE;
   bool finish = false;
 
   /* Bt sequence */
@@ -93,16 +93,16 @@ int main(int argc, char **argv)
     case RECOGNIZE:
       if (recognition.rootNode()->executeTick() == BT::NodeStatus::SUCCESS)
       {
-        //state = FOLLOWING;     
-        finish = true;
+        state = FOLLOWING;     
+        //finish = true;
       }
       break;
 
     case FOLLOWING:
       if (follow.rootNode()->executeTick() == BT::NodeStatus::SUCCESS)
       {
-        //state = GOING_HOME;      
-        finish = true;
+        state = GOING_HOME;
+      //  finish = true;
       }
       break;
     

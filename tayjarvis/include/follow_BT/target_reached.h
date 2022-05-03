@@ -18,6 +18,7 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include <move_base_msgs/MoveBaseAction.h>
+#include "dialog_cbs/dialog_cbs.h"
 #include "follow_BT/BTNavAction.h"
 #include "std_msgs/Int32.h"
 #include <string>
@@ -45,6 +46,8 @@ class target_reached : public BT::ActionNodeBase
   private:
     ros::NodeHandle nh_;
     ros::Publisher act_pub_;
+    gb_dialog::DialogManager litsener;
+    int first_execute = 0;
 };
 
 }  // namespace FOLLOW_BT
