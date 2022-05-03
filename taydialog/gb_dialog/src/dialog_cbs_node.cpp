@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 
   // Métodos para la prueba de Find My Mates
   // forwarder.welcomeHumanFMM();
-  // forwarder.askForName();
+  forwarder.askForName();
 
   // Métodos para la prueba de Carry My Luggage
   // forwarder.welcomeHumanCML();

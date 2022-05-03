@@ -248,8 +248,6 @@ DialogManager::askForName()
   std::cout << "-------------------------------------------------" << std::endl;
   std::cout << "[TAY_DIALOG] person name is: " << personName_ << std::endl;
   std::cout << "-------------------------------------------------" << std::endl;
-  speak("Hi there " + personName_ + ", please do not move from here");
-  ros::Duration(4,0).sleep();
 }
     
 void
