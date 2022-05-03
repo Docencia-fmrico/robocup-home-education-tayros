@@ -50,27 +50,43 @@ PersonLocalizator::PersonLocalizator():
     person_info_pub_ = nh.advertise<taymsgs::person_info>("/tayros/person_info", 1);
     restart_person_status();
 
-    zones[0].id = KITCHEN;
-    zones[0].name = "KITCHEN";
-    zones[0].minX = -0.41896533966064453;
-    zones[0].maxX = 1.6929583549499512;
-    zones[0].minY = 1.2567211389541626;
-    zones[0].maxY = 4.463983535766602;
+    zones[0].id = 1;
+    zones[0].minX = 0.1794237494468689;
+    zones[0].maxX = 2.13232159614563;
+    zones[0].minY = 7.347957611083984;
+    zones[0].maxY = 8.730541229248047;
 
-    zones[1].id = BATHROOM;
-    zones[1].name = "BATHROOM"; // Room in the simulator
-    zones[1].minX = -0.362093448638916;
-    zones[1].maxX = 3.0790772438049316;
-    zones[1].minY = 4.7487382888793945;
-    zones[1].maxY = 8.862476348876953;
+    zones[1].id = 2;
+    zones[1].minX = -2.674506664276123;
+    zones[1].maxX = -0.052829861640930176;
+    zones[1].minY = 7.832345962524414;
+    zones[1].maxY = 9.029717445373535;
 
 
-    zones[2].id = LIVING;
-    zones[2].name = "LIVING";
-    zones[2].minX = 1.276754379272461;
-    zones[2].maxX = 8.677393913269043;
-    zones[2].minY = -0.7209274768829346;
-    zones[2].maxY = 6.329730987548828;
+    zones[2].id = 3;
+    zones[2].minX = -2.4512338638305664;
+    zones[2].maxX = -1.3018546104431152;
+    zones[2].minY = 5.100671291351318;
+    zones[2].maxY = 8.195911407470703;
+
+    zones[3].id = 4;
+    zones[3].minX = -2.495957374572754;
+    zones[3].maxX = -1.3095178604125977;
+    zones[3].minY = 2.7130393981933594;
+    zones[3].maxY = 5.119590759277344;
+
+    zones[4].id = 5;
+    zones[4].minX = -1.5878496170043945;
+    zones[4].maxX = -0.42526817321777344;
+    zones[4].minY = 1.3998517990112305;
+    zones[4].maxY = 3.2975192070007324;
+
+
+    zones[5].id = 6;
+    zones[5].minX = 1.1362266540527344;
+    zones[5].maxX = 3.0820064544677734;
+    zones[5].minY = 1.3447916507720947;
+    zones[5].maxY = 2.8056538105010986;
 
   }
 
@@ -194,7 +210,7 @@ PersonLocalizator::get_zone(PersonPoint3D point){
 	for(int i = 0; i < ZONES_NUMBER; i++){
 		if (point.x > zones[i].minX && point.x < zones[i].maxX 
 		&& point.y > zones[i].minY && point.y < zones[i].maxY){
-			std::cout << "Person Found in " << zones[i].name << std::endl;
+			std::cout << "Person Found in: " << zones[i].id << std::endl;
 			return zones[i].id;
 		}
 	}

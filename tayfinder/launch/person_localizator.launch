@@ -6,8 +6,8 @@
   </include>
 
   <include file="$(find navigation)/launch/navigation.launch">
-    <arg name="map_file" default="$(find navigation)/maps/GrannieAnnie.yaml"/>
-		<!-- "GrannieAnnie.yaml --> <!-- "lab.yaml" -->
+    <arg name="map_file" default="$(find navigation)/maps/lab1.yaml"/>
+		<!-- "GrannieAnnie.yaml --> <!-- "lab1.yaml" -->
   </include>
 
 

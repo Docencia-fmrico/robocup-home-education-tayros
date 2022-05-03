@@ -61,36 +61,34 @@ void BbxsTo3D::callback_bbx(const sensor_msgs::ImageConstPtr& image,
 
   for (const auto & box : boxes->bounding_boxes)
   {
- 
-			ROS_INFO("BOX");
 
     if (box.Class == detectedObject_  && cam_info_taked)
     {
-			int px = (box.xmax + box.xmin) / 2;
-    		int py = (box.ymax + box.ymin) / 2;
-			float dist = img_ptr_depth->image.at<float>(cv::Point(px, py)* 0.001f); // * 0.001f
+		int px = (box.xmax + box.xmin) / 2;
+		int py = (box.ymax + box.ymin) / 2;
+		float dist = img_ptr_depth->image.at<float>(cv::Point(px, py)* 0.001f); // * 0.001f
 
-			cv::Point2d pixel_point(px, py);
-			cv::Point3d xyz = cam_model_.projectPixelTo3dRay(pixel_point);
-			std::cout << "point (3D) = " << xyz << dist << std::endl << std::endl;
+		cv::Point2d pixel_point(px, py);
+		cv::Point3d xyz = cam_model_.projectPixelTo3dRay(pixel_point);
+		std::cout << "point (3D) = " << xyz << dist << std::endl << std::endl;
 
-			tf::StampedTransform transform;
-			transform.setOrigin(tf::Vector3(dist, -xyz.x, 0.0));
-			transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
+		tf::StampedTransform transform;
+		transform.setOrigin(tf::Vector3(dist, -xyz.x, 0.0));
+		transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
 
-			transform.stamp_ = ros::Time::now();
-			transform.frame_id_ = workingFrameId_;
-			transform.child_frame_id_ = ObjectFrameId_; 
+		transform.stamp_ = ros::Time::now();
+		transform.frame_id_ = workingFrameId_;
+		transform.child_frame_id_ = ObjectFrameId_; 
 
-			try
-			{
-				tfBroadcaster_.sendTransform(transform);
-			}
-			catch(tf::TransformException& ex)
-			{
-				ROS_ERROR_STREAM("Transform error of sensor data(BbxTo3D): " << ex.what() << ", quitting callback");
-				return;
-			}
+		try
+		{
+			tfBroadcaster_.sendTransform(transform);
+		}
+		catch(tf::TransformException& ex)
+		{
+			ROS_ERROR_STREAM("Transform error of sensor data(BbxTo3D): " << ex.what() << ", quitting callback");
+			return;
+		}
 		}
 	}
 }

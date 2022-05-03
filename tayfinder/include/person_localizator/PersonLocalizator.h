@@ -57,7 +57,6 @@ typedef struct
 	double	maxX;
 	double minY;
 	double maxY;
-	std::string name;
 	int id;
 }Zone;
 
@@ -92,12 +91,9 @@ private:
 	// ---------------- ------------ --------------- //
 
 	// ----------------- Zones Info ---------------- //
-	static const int ZONES_NUMBER = 3;
-	const int OUTSIDE = -1;
-	const int KITCHEN = 0;
-	const int BATHROOM = 1;
-	const int LIVING = 2;
+	static const int ZONES_NUMBER = 6;
 
+	const int OUTSIDE = -1;
 	Zone zones[ZONES_NUMBER];
 	// ---------------- ------------ --------------- //
 
