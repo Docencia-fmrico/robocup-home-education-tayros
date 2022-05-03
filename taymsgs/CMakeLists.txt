@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   person.msg
+  person_info.msg
 )
 
 generate_messages(
