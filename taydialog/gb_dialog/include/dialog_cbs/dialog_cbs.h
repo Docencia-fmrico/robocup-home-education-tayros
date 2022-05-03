@@ -33,10 +33,10 @@ public:
 
     void welcomeHumanCML();
     void welcomeHumanFMM();
-    void pointBag(int listenFlag);
-    void startNav();
-    void movementIndications();
-    void askForName();
+    std::string pointBag(int flag);
+    std::string startNav(int flag);
+    std::string movementIndications(int flag);
+    std::string askForName(int flag);
     void askForNameCB(dialogflow_ros_msgs::DialogflowResult result);
 
     void pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result);
@@ -49,6 +49,7 @@ public:
 
     std::string isCarReached();
     std::string getPointedBag();
+    std::string getPersonName();
 
 private:
     ros::NodeHandle nh_;
