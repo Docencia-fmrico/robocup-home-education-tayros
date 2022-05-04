@@ -29,6 +29,7 @@ find_package(catkin REQUIRED COMPONENTS
   darknet_ros_msgs
   image_geometry
   taymsgs
+  taydialog
 )
 
 find_package(OpenCV)
@@ -54,6 +55,7 @@ LIBRARIES
     pcl_ros
     image_geometry
     taymsgs
+    taydialog
 )
 
 include_directories(
@@ -72,7 +74,8 @@ add_library(BT_recovery_node_finder SHARED src/back_home_BT/Recovery.cpp)
 add_library(BT_say_data_finder SHARED src/back_home_BT/Say_data.cpp)
 add_library(${PROJECT_NAME}  
 src/person_localization/PersonLocalizator.cpp
-src/person_localization/BbxsTo3D.cpp)
+src/person_localization/BbxsTo3D.cpp
+src/person_info/Take_person_info.cpp)
 
 list(APPEND plugin_libs
   BT_move_node_finder
@@ -96,6 +99,10 @@ target_link_libraries(person_localizator ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 add_executable(bbxs_to_3dpoint src/bbxs_to_3dpoint.cpp)
 target_link_libraries(bbxs_to_3dpoint ${PROJECT_NAME} ${catkin_LIBRARIES})
+
+add_executable(take_person_info_node src/take_person_info_node.cpp)
+target_link_libraries(take_person_info_node ${PROJECT_NAME} ${catkin_LIBRARIES})
+
 
 roslint_cpp(
   src/find_my_mates.cpp

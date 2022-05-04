@@ -12,22 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "dialog_cbs/dialog_cbs.h"
-#include <ros/ros.h>
+#include "person_info/Take_person_info.h"
+#include "ros/ros.h"
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "dialog_cbs_node");
+  ros::init(argc, argv, "take_person_info");
+  tayPersonInfo::PersonInfo person_info_catcher;
 
-  gb_dialog::DialogManager forwarder;
-  // No quitar este sleep que si no NO DA TIEMPO AL CONSTRUCTOR
-  ros::Duration(1, 0).sleep();
-
-  while(ros::ok())
+  ros::Rate loop_rate(20);
+  while (ros::ok())
   {
-    forwarder.listen();
+    person_info_catcher.step();
 
     ros::spinOnce();
+    loop_rate.sleep();
   }
+
+  ros::spin();
   return 0;
 }

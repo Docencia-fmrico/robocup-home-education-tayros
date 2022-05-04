@@ -87,31 +87,22 @@ DialogManager::welcomeHumanCML()
   ros::Duration(6, 0).sleep();
 }
 
-void
-DialogManager::pointBag(int listenFlag)
+std::string
+DialogManager::pointBag(int flag)
 {
   ROS_INFO("[TAY_DIALOG] pointBag:");
-  if(listenFlag == 0)
+  if(flag == 0)
   {
-      speak("Please, point the bag you want me to carry.");
+    speak("Please, point the bag you want me to carry.");
     ros::Duration(4, 0).sleep();
   }
-  else
+  else if (flag == 1)
   {
     speak("Please, say which bag you want me to carry: left or right?");
     ros::Duration(5, 0).sleep();
-    while(ros::ok())
-    {
-      if(!questionAsked_)
-      {
-        listen();
-      }
-      if(pointedBag_ != "none")
-      {
-        break;
-      }
-      ros::spinOnce();
-    }
+  }
+  else
+  {
     std::cout << "-------------------------------------------------" << std::endl;
     std::cout << "[TAY_DIALOG] direction: " << pointedBag_ << std::endl;
     std::cout << "-------------------------------------------------" << std::endl;
@@ -120,6 +111,7 @@ DialogManager::pointBag(int listenFlag)
     ros::Duration(7,0).sleep();
     questionAsked_ = false;
   }
+  return pointedBag_;
 }
 
 void
@@ -138,27 +130,23 @@ DialogManager::pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result)
   */
   pointedBag_ = result.fulfillment_text;
   questionAsked_ = true;
+  pointBag(2);
 }
 
-void
-DialogManager::startNav()
+std::string
+DialogManager::startNav(int flag)
 {
   ROS_INFO("[TAY_DIALOG] startNav:");
-  speak("Once your are ready to start the journey, say: START");
-  ros::Duration(5, 0).sleep();
-  while(ros::ok())
+  if(flag == 0)
   {
-    if(!questionAsked_)
-    {
-      listen();
-    }
-    if(readyToMove_ == "true")
-    {
-      break;
-    }
-      ros::spinOnce();
+    speak("Once your are ready to start the journey, say: START");
+    ros::Duration(5, 0).sleep();
   }
-  questionAsked_ = false;
+  else
+  {
+    questionAsked_ = false;
+  }
+  return readyToMove_;
 }
 
 void
@@ -167,31 +155,27 @@ DialogManager::startNavCB(dialogflow_ros_msgs::DialogflowResult result)
   ROS_INFO("[TAY_DIALOG] startNavCB:");
   readyToMove_ = result.fulfillment_text;
   questionAsked_ = true;
+  startNav(1);
 }
 
-void
-DialogManager::movementIndications()
+std::string
+DialogManager::movementIndications(int flag)
 {
   ROS_INFO("[TAY_DIALOG] movementIndicationsCB:");
-  speak("I will start following you. Please do not get to far from me.");
-  ros::Duration(5,0).sleep();
-  speak("Once we reach the car, please, say: STOP");
-  ros::Duration(4,0).sleep();
-  while(ros::ok())
+  if (flag == 0)
   {
-    if(!questionAsked_)
-    {
-      listen();
-    }
-    if(carReached_ == "true")
-    {
-      break;
-    }
-    ros::spinOnce();
+    speak("I will start following you. Please do not get to far from me.");
+    ros::Duration(5,0).sleep();
+    speak("Once we reach the car, please, say: STOP");
+    ros::Duration(4,0).sleep();
   }
-  speak("Car reached. Please, take the bag. I will return to the spawnpoint soon.");
-  ros::Duration(10,0).sleep();
-  questionAsked_ = false;
+  else
+  {
+    speak("Car reached. Please, take the bag. I will return to the spawnpoint soon.");
+    ros::Duration(10,0).sleep();
+    questionAsked_ = false;
+  }
+  return carReached_;
 }
 
 void
@@ -200,6 +184,7 @@ DialogManager::carReachedCB(dialogflow_ros_msgs::DialogflowResult result)
   ROS_INFO("[TAY_DIALOG] carReachedCB: intent [%s]", result.intent.c_str());
   carReached_ = result.fulfillment_text;
   questionAsked_ = true;
+  movementIndications(1);
 }
   
 void
@@ -226,28 +211,23 @@ DialogManager::welcomeHumanFMM()
   ros::Duration(6,0).sleep();
 }
 
-void
-DialogManager::askForName()
+std::string
+DialogManager::askForName(int flag)
 {
   ROS_INFO("[TAY_DIALOG] askForName:");
-  speak("Hi there, what is your name?");
-  ros::Duration(3,0).sleep();
-  while(ros::ok())
+  if (flag == 0)
   {
-    if(!questionAsked_)
-    {
-      listen();
-    }
-    if(personName_ != "none")
-    {
-      break;
-    }
-    ros::spinOnce();
+    speak("Hi there, what is your name?");
+    ros::Duration(3,0).sleep();
   }
-  questionAsked_ = false;
-  std::cout << "-------------------------------------------------" << std::endl;
-  std::cout << "[TAY_DIALOG] person name is: " << personName_ << std::endl;
-  std::cout << "-------------------------------------------------" << std::endl;
+  else
+  {
+    questionAsked_ = false;
+    std::cout << "-------------------------------------------------" << std::endl;
+    std::cout << "[TAY_DIALOG] person name is: " << personName_ << std::endl;
+    std::cout << "-------------------------------------------------" << std::endl;
+  }
+  return personName_;
 }
     
 void
@@ -256,6 +236,7 @@ DialogManager::askForNameCB(dialogflow_ros_msgs::DialogflowResult result)
   ROS_INFO("[TAY_DIALOG] askForNameCB:");
   personName_ = result.fulfillment_text;
   questionAsked_ = true;
+  askForName(1);
 }
 
 void
@@ -275,6 +256,12 @@ std::string
 DialogManager::isCarReached()
 {
   return carReached_;
+}
+
+std::string
+DialogManager::getPersonName()
+{
+  return personName_;
 }
 
 } // namespace gb_dialog
