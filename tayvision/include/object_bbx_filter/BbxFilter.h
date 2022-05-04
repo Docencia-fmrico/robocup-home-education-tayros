@@ -15,6 +15,7 @@
 #ifndef OBJECT_FILTER_BBXFILTER_H
 #define OBJECT_FILTER_BBXFILTER_H
 
+#include "std_msgs/Int32.h"
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
 #include <message_filters/sync_policies/approximate_time.h>
@@ -56,6 +57,7 @@ public:
 
 private:
   ros::NodeHandle nh_;
+  ros::Subscriber activation_sub_;
   const bool DEBUG = true;
   const bool IMAGE_DEBUG = true;
 
@@ -97,6 +99,7 @@ private:
   const float MAX_DISTANCE_DIFFERENCE_ = 0.4;
   const float MAX_ANGLE_DIFFERENCE_ = 0.2;
   const int RESTART_TICKS_ = 100;
+  int activation_;
 
   float last_distance_;  // Save last distance measured
   float last_angle_;
@@ -114,6 +117,8 @@ private:
 
   std::string filterobject_;
   std::string TopicPubID;
+
+  void activation_callback(const std_msgs::Int32::ConstPtr& msg);
 };
 }  // namespace object_bbx_filter
 

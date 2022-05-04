@@ -2,10 +2,10 @@
      <BehaviorTree ID="FollowTree">
 
         <ReactiveSequence name="root_sequence">
-            <!--Follow without navigation-->
+            <!--****Follow without navigation****-->
             <!--<Follow name="follow_human"/>-->
         
-            <!--Follow with navigation-->
+            <!--****Follow with navigation****-->
             <Set_goal name="Set_goal" pos="{target}"/>
             <Move name="Move" pos="{target}"/>
 

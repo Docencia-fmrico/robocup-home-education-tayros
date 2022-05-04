@@ -15,6 +15,7 @@ Set_route::Set_route() : n_("~")
     std::string human_pos_topic =  n_.param("tf_to_pos_topic", std::string("/tayros/pose_of_human"));
     std::string service_name = "/move_base/make_plan";
     std::string pos_topic_pub =  n_.param("target_pos_topic", std::string("/tayros/pose_to_go"));
+
     route_client_ = n_.serviceClient<nav_msgs::GetPlan>(service_name);
     sub_target_pos =  n_.subscribe<move_base_msgs::MoveBaseGoal>(human_pos_topic, 1, &Set_route::human_pos_callback, this);
     sub_robot_pos_ = n_.subscribe<geometry_msgs::PolygonStamped>("/move_base/global_costmap/footprint", 1, &Set_route::current_pos_callback, this);
@@ -22,6 +23,7 @@ Set_route::Set_route() : n_("~")
 
     currentX_ = 0;
     currentY_= 0;
+    first_msg_recived_ = false;
 }
 
 void 
@@ -52,7 +54,7 @@ Set_route::makePlan()
         if (index != 0)
         {
             int array_pos = index-1-(index-1)*FACTOR;
-            ROS_INFO("Longiuts = %ld", index);
+            //ROS_INFO("Longiuts = %ld", index);
             goal.target_pose.pose.position.x = new_goal.response.plan.poses[array_pos].pose.position.x;
             goal.target_pose.pose.position.y = new_goal.response.plan.poses[array_pos].pose.position.y;
             //goal.target_pose.pose.orientation.x = 0;//new_goal.response.plan.poses[array_pos].pose.orientation.x;
@@ -61,15 +63,18 @@ Set_route::makePlan()
             goal.target_pose.pose.orientation.w = 1;//new_goal.response.plan.poses[array_pos].pose.orientation.w;
 
             
-            ROS_INFO("X final = %f", new_goal.response.plan.poses[array_pos].pose.position.x);
-            ROS_INFO("Y final = %f", new_goal.response.plan.poses[array_pos].pose.position.y);
+           // ROS_INFO("X final = %f", new_goal.response.plan.poses[array_pos].pose.position.x);
+           // ROS_INFO("Y final = %f", new_goal.response.plan.poses[array_pos].pose.position.y);
+            if (!first_msg_recived_)
+            {
+                calculated_pos_pub_.publish(goal);
+            }
             
-            calculated_pos_pub_.publish(goal);
         }
     }
     else
     {
-        ROS_ERROR("Service failed");
+        //ROS_ERROR("Service failed");
     }
 }
 
@@ -82,6 +87,8 @@ Set_route::human_pos_callback(const move_base_msgs::MoveBaseGoal::ConstPtr& targ
     orientationY = target->target_pose.pose.orientation.y;
     orientationZ = target->target_pose.pose.orientation.z;
     orientationW = target->target_pose.pose.orientation.w;
+    ROS_INFO("First calllllllllll");
+    first_msg_recived_ = true;
 }
 
 void
@@ -89,7 +96,7 @@ Set_route::current_pos_callback(const geometry_msgs::PolygonStamped::ConstPtr& p
 {
     currentX_ = position->polygon.points[0].x;
     currentY_ = position->polygon.points[0].y;
-    ROS_INFO("Pos x = %f, Pos Y = %f", currentX_, currentY_);
+    //ROS_INFO("Pos x = %f, Pos Y = %f", currentX_, currentY_);
 }
 
 }

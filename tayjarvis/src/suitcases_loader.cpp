@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(10);
 
-  int state = RECOGNIZE;
+  int state = FOLLOWING;
   bool finish = false;
 
   /* Bt sequence */
@@ -132,7 +132,6 @@ int main(int argc, char **argv)
     case GOING_HOME:
      if (back_home.rootNode()->executeTick() == BT::NodeStatus::SUCCESS)
       {
-        ROS_INFO("Prueba terminada!!!!!!!!!!!!!!");
         finish = true;
       }
       break;

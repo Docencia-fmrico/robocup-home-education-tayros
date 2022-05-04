@@ -24,12 +24,17 @@ BT::NodeStatus
 Welcome_human::tick()
 {
   gb_dialog::DialogManager speaker;
-  speaker.welcomeHumanCML();
+  if (first_execute_)
+  {
+    speaker.welcomeHumanCML();
+    first_execute_ = false;
+  }
+  
   
   return BT::NodeStatus::SUCCESS;
 }  
 
-}// namespace person_recognize
+}  // namespace person_recognize
 
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory)

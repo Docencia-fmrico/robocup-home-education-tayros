@@ -1,7 +1,7 @@
 <launch>
 
 	<include file="$(find darknet_ros)/launch/darknet_ros.launch">
-    <arg name="image"  value="/usb_cam/image_raw"/>
+    <arg name="image"  value="/camera/rgb/image_raw"/>
 		<!-- "/usb_cam/image_raw" --> <!-- "/camera/rgb/image_raw" -->
   </include>
 

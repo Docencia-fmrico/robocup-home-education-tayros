@@ -2,15 +2,15 @@ pos_x0_home: 0.008
 pos_y0_home : -4.168
 orient_w0_home: 1.00
 
-pos_x0_arb: 0.000
-pos_y0_arb: 0.000
+pos_x0_arb: 1.020
+pos_y0_arb: 5.120
 orient_w0_arb: 1.00
 
 # Waiting time to point the bag
 wait_pointing_time: 4.0
-max_pointing_requests: 3
+max_pointing_requests: 10
 turning_time: 2
-turning_velocity: 0.7 
+turning_velocity: 0.5
 
 # Set_goal_node
 tf_to_pos_topic: /tayros/pose_of_human
@@ -20,3 +20,4 @@ target_pos_topic: /tayros/pose_to_go
 activation_topic: /tayros/pointer_detector_activation
 suticase_side_topic: /tayros/suitcase_side
 bbx_reset_topic: /tayros/bbx_reset
+activation_bbx_filter: /tayros/activation_bx_filter

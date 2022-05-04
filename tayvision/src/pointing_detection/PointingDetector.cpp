@@ -32,7 +32,7 @@ PointingDetector::PointingDetector()
 : nh(),
   workingFrameId_("/base_footprint"),
   detectedObject_("person"),
-  image_depth_sub(nh, "/usb_cam/image_raw", 1),
+  image_depth_sub(nh, "/camera/rgb/image_raw", 1),
   bbx_sub(nh, "/darknet_ros/bounding_boxes", 1),
   sync_bbx(MySyncPolicy_bbx(10), image_depth_sub, bbx_sub)
   {

@@ -41,6 +41,7 @@ class Welcome_human : public BT::ActionNodeBase
 
   private: 
     ros::NodeHandle nh_;
+    bool first_execute_ = true;
 };
 
 }  // namespace PERSON_RECOGNIZE
