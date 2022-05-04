@@ -39,6 +39,7 @@ namespace Route
         float orientationW;
         float DEFAULT_ORIENTATION_W = 1;
 
+        bool first_msg_recived_;
         float currentX_;
         float currentY_;
     };

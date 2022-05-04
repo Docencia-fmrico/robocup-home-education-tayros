@@ -11,15 +11,27 @@
 <!--<include file="$(find navigation)/launch/navigation.launch"/>-->
 
      <!--Real-->
-<include file="$(find taynav)/launch/navigation.launch"/>
+<!--<include file="$(find taynav)/launch/navigation.launch"/>-->
 
                               <!--Vision-->
-<include file="$(find tayvision)/launch/bbx_color_detection.launch"/>
-<include file="$(find tayvision)/launch/bbx_pointing_detection.launch"/>
-<include file="$(find tayvision)/launch/bbx_filter.launch"/>
+<include file="$(find darknet_ros)/launch/darknet_ros.launch">
+    <arg name="image"  value="/camera/rgb/image_raw"/>
+</include>
+
+<node 
+     pkg="tayvision" type="pointing_detector_node" name="Bbx_Pointing_Detection" output="log">
+</node>
+<node 
+     pkg="tayvision" type="bbx_to_3d_node" name="Bbx_To_3d" output="log">
+</node>
+
+<node 
+     pkg="tayvision" type="bbx_filter_node" name="Bbx_Filter" output="screen">
+</node>
+
 
                               <!--Person localization -->
-<node pkg="taynav" type="tf_to_goal" name="tf_to_goal">
+<node pkg="taynav" type="tf_to_goal_node" name="tf_to_goal_node">
      <rosparam command="load" file="$(find tayjarvis)/param/coordinates.yaml"/>
 </node>
 

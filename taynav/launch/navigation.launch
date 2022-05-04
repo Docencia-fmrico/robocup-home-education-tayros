@@ -2,7 +2,7 @@
 
  <arg name="custom_param_file" default="$(find taynav)/param/dummy.yaml"/>
   <!-- Map server -->
-  <arg name="map_file" default="$(find taynav)/maps/map_clase.yaml"/>
+  <arg name="map_file" default="$(find taynav)/maps/lab1.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
   <arg name="initial_pose_x" default="-0.05"/>

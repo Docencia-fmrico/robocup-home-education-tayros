@@ -44,11 +44,14 @@ class SetGoal : public BT::ActionNodeBase
   private:
     ros::NodeHandle nh_;
     ros::Publisher act_pub_;
+    ros::Publisher bbx_act_pub_;
     ros::Subscriber pos_sub_;
+
     void callback(const move_base_msgs::MoveBaseGoal::ConstPtr& msg);
 
     move_base_msgs::MoveBaseGoal goal_;
 
+    bool first_msg_recived_;
     float counter;
 };
 

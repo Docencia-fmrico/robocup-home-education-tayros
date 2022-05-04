@@ -34,7 +34,7 @@ SetGoal::SetGoal() : nh_("~")
   transform_made_ = false;
 
   std::string mov_publisher =  nh_.param("tf_to_pos_topic", std::string("/tayros/tf_to_poses"));
-  std::string activation_sub =  nh_.param("set_goal_activation_topic", std::string("tay_ros/set_goal_activation"));
+  std::string activation_sub =  nh_.param("set_goal_activation_topic", std::string("/tay_ros/set_goal_activation"));
   pos_pub_ = nh_.advertise<move_base_msgs::MoveBaseGoal>(mov_publisher, 1);
   sub_activation_ =  nh_.subscribe<std_msgs::Int32>(activation_sub, 1, &SetGoal::callback, this);
 }
@@ -114,7 +114,6 @@ SetGoal::get_dist_angle_tf()
 void
 SetGoal::calculate_goal()
 {
-  activation_ = GO;
   if (activation_ == GO)
   {
    // get_dist_angle_tf();
@@ -138,6 +137,7 @@ SetGoal::calculate_goal()
 void
 SetGoal::callback(const std_msgs::Int32::ConstPtr& msg)
 {
+  ROS_INFO("Entro en bufeeeer");
   activation_ = msg->data;
 }
 

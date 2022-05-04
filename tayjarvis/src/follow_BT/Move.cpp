@@ -63,7 +63,7 @@ Move::on_tick()
     last_time_ = current_time_;
   }
   
-  //std::cerr << "Moving" << std::endl;
+  std::cerr << "Moving" << std::endl;
   return BT::NodeStatus::RUNNING;
 }
 

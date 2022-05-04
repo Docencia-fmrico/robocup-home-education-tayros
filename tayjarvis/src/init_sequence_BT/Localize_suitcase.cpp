@@ -54,7 +54,6 @@ Localize_suitcase::halt()
 BT::NodeStatus
 Localize_suitcase::tick()
 { 
-  position_= RIGHT;
   current_time_ = ros::Time::now().toSec();
   if(current_time_ - waiting_time_ >= last_time_ || counter_ == 0)
   {
