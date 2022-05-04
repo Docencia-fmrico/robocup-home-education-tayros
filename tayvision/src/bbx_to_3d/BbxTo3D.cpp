@@ -65,15 +65,15 @@ void BbxTo3D::callback_bbx(const sensor_msgs::ImageConstPtr& image,
   {
     int px = (box.xmax + box.xmin) / 2;
     int py = (box.ymax + box.ymin) / 2;
-		float dist = img_ptr_depth->image.at<float>(cv::Point(px, py))* 0.001f; // * 0.001f
+	float dist = img_ptr_depth->image.at<float>(cv::Point(px, py))* 0.001f; // * 0.001f
 
     if (box.Class == detectedObject_ )
     {
 		ROS_INFO("%s%d%s%d\n", "PX: ",px, " PY: ", py);
-    px_ = px;
+		px_ = px;
 		py_ = py;
 		distance_ = dist;
-  }
+  	}
 }
 }
 

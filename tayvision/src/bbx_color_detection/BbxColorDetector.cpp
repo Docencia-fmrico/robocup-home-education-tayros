@@ -22,6 +22,7 @@
 #include "bbx_color_detection/BbxColorDetector.h"
 #include <unistd.h>
 #include <string.h>
+#include "std_msgs/String.h"
 #include <image_transport/image_transport.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -33,96 +34,44 @@ BbxColorDetector::BbxColorDetector():
 	it_(nh),
   workingFrameId_("/base_footprint"),
   detectedObject_("person"),
+  TopicColorPub("tayvision/person/color"),
   image_sub(nh, "/usb_cam/image_raw", 1),
   bbx_sub(nh, "/darknet_ros/bounding_boxes", 1),
   sync_bbx(MySyncPolicy_bbx(10), image_sub, bbx_sub)
   {
     sync_bbx.registerCallback(boost::bind(&BbxColorDetector::callback_bbx, this, _1, _2));
+    color_pub_ = nh.advertise<std_msgs::String>(TopicColorPub, 1);
 
 		image_pub_ = it_.advertise("/object_filtered_debug/image/person", 1);
     cv::namedWindow("Imagen filtrada");
 
-		black.rlower = 0;
-    black.rupper = 96;
-    black.glower = 0;
-    black.gupper = 96;
-    black.blower = 0;
-    black.bupper = 96;
     black.name = "BLACK";
-    black.counter = 0;
     colors_arr[0] = black;
 
-    red.rlower = 128;
-    red.rupper = 255;
-    red.glower = 0;
-    red.gupper = 153;
-    red.blower = 0;
-    red.bupper = 153;
+    white.name = "WHITE";
+    colors_arr[1] = white;
+
     red.name = "RED";
-    red.counter = 0;
-    colors_arr[1] = red;
+    colors_arr[2] = red;
 
-	  orange.rlower = 128;
-    orange.rupper = 255;
-    orange.glower = 128;
-    orange.gupper = 204;
-    orange.blower = 0;
-    orange.bupper = 153;
-    orange.name = "ORANGE";
-    orange.counter = 0;
-    colors_arr[2] = orange;
+    pink.name = "PINK";
+    colors_arr[3] = pink;
 
-    yellow.rlower = 153;
-    yellow.rupper = 255;
-    yellow.glower = 153;
-    yellow.gupper = 255;
-    yellow.blower = 0;
-    yellow.bupper = 153;
+    light_blue.name = "LIGHT_BLUE";
+    colors_arr[4] = light_blue;
+
     yellow.name = "YELLOW";
-    yellow.counter = 0;
-    colors_arr[3] = yellow;
+    colors_arr[5] = yellow;
 
-    green.rlower = 0;
-    green.rupper = 128;
-    green.glower = 128;
-    green.gupper = 255;
-    green.blower = 0;
-    green.bupper = 128;
     green.name = "GREEN";
-    green.counter = 0;
-    colors_arr[4] = green;
+    colors_arr[6] = green;
 
-    blue.rlower = 0;
-    blue.rupper = 153;
-    blue.glower = 0;
-    blue.gupper = 255;
-    blue.blower = 128;
-    blue.bupper = 255;
     blue.name = "BLUE";
-    blue.counter = 0;
-    colors_arr[5] = blue;
+    colors_arr[7] = blue;
 
-    magenta.rlower = 204;
-    magenta.rupper = 0;
-    magenta.glower = 0;
-    magenta.gupper = 153;
-    magenta.blower = 102;
-    magenta.bupper = 204;
-    magenta.name = "PURPLE";
-    magenta.counter = 0;
-    colors_arr[6] = magenta;
-
-    whithe.rlower = 153;
-    whithe.rupper = 255;
-    whithe.glower = 153;
-    whithe.gupper = 255;
-    whithe.blower = 153;
-    whithe.bupper = 255;
-    whithe.name = "WHITHE";
-    whithe.counter = 0;
-    colors_arr[7] = whithe;
-
-  }
+    counters_restart();
+    restart_ = true;
+    }
 
 void BbxColorDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
   const darknet_ros_msgs::BoundingBoxesConstPtr& boxes)
@@ -141,11 +90,17 @@ void BbxColorDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
       return;
   }
 
-	cv::Mat rgb = img_ptr->image;
+  cv::Mat rgb;
+	rgb = img_ptr->image;
 	int step = rgb.step;
+
+  if(restart_){
+    restart_ = false;
+    counters_restart();
+  }
+
 	for (const auto & box : boxes->bounding_boxes)
   {
-    // Box borders aliasing
     
     BbxSize bbx_aliased;
     bbx_aliased = box_borders_aliasing(box);
@@ -156,27 +111,24 @@ void BbxColorDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
     // Color study 
     for(int col = 0; col < COL_SEGMETS; col++){
 				for(int row = 0; row < ROW_SEGMETS; row++){
-          
-          for(int i = 0; i < NUM_COLORS; i++){
-            if(check_color(rgb_current_values[col][row], colors_arr[i])){
-              colors_arr[i].counter++;
-              std::cout <<  colors_arr[i].name << "\t";
-            }
-            else if(i == NUM_COLORS - 1){
-              std::cout <<  "NULL" << "\t";
-            }
-          }
-
+          detect_color(rgb_current_values[col][row]);
+        }
       }
-        std::cout << std::endl;
-    }
+
 
     // Results
     for (int i = 0; i < NUM_COLORS; i++){
-      std::cout <<  colors_arr[i].name << ":\t" << colors_arr[i].counter << std::endl;
+      std::cout <<  "Color: "<<  colors_arr[i].name << ":\t" << colors_arr[i].counter << std::endl;
     }
 
+    Color max_color;
+    max_color = get_max_color();
 
+    if(max_color.counter > PUBLISH_THRESHOLD){
+      std_msgs::String pub_color;
+      pub_color.data = max_color.name;
+      color_pub_.publish(pub_color);
+    }
 
 		if(IMAGE_DEBUG){
 			
@@ -267,7 +219,7 @@ void BbxColorDetector::rgb_from_bbx(darknet_ros_msgs::BoundingBox box, BbxSize b
   if(debug){
   for(int col = 0; col < COL_SEGMETS; col++){
     for(int row = 0; row < ROW_SEGMETS; row++){
-      std::cout << " ["<< result_hsv[col][row].b << " " << result_hsv[col][row].g << " " << result_hsv[col][row].r << "]";
+      std::cout << " ["<< result_hsv[col][row].r << " " << result_hsv[col][row].g << " " << result_hsv[col][row].b << "]";
     }
     std::cout << std::endl;
   }
@@ -275,15 +227,89 @@ void BbxColorDetector::rgb_from_bbx(darknet_ros_msgs::BoundingBox box, BbxSize b
   }
 }
 
-bool BbxColorDetector::check_color(Rgb rgb_data , Color color){
+int BbxColorDetector::detect_color(Rgb rgb_data){
 
-  if(rgb_data.r >= color.rlower && rgb_data.r <= color.rupper && 
-    rgb_data.g >= color.glower && rgb_data.g <= color.gupper &&
-    rgb_data.b >= color.blower && rgb_data.b <= color.bupper){
-    return true;
+  int r = rgb_data.r;
+  int g = rgb_data.g;
+  int b = rgb_data.b;
+
+  if(r < 100 && g < 100 && b <= 100){
+    colors_arr[BLACK].counter++;
+    return BLACK;
   }
-  return false;
+  if(r >= 150 && b >= 200 && g >= 150){
+    colors_arr[WHITE].counter++;
+    return WHITE;
+  }
+
+  if(r > g && r > b){
+    if(b <= g + 60 && b >= g - 60){
+      colors_arr[RED].counter++;
+      return RED;
+    }
+    else if(b > g + 60){
+      colors_arr[PINK].counter++;
+      return PINK;
+    }
+    else if(g > b + 60){
+      colors_arr[YELLOW].counter++;
+      return YELLOW;
+    }
+  }
+  
+  if(g > r && g >= b){
+    if(r <= b + 60 && r >= b - 60){
+      colors_arr[GREEN].counter++;
+      return GREEN;
+    }
+    else if(r > b + 60){
+      colors_arr[YELLOW].counter++;
+      return YELLOW;
+    }
+    else if(b > r + 60){
+      colors_arr[LIGHT_BLUE].counter++;
+      return LIGHT_BLUE;
+    }
+  }
+
+  if(b > r && b > g){
+    if(g <= r + 60 && g >= r - 60){
+      colors_arr[BLUE].counter++;
+      return BLUE;
+    }
+    else if(g > r + 60){
+      colors_arr[LIGHT_BLUE].counter++;
+      return LIGHT_BLUE;
+    }
+    else if(r > g + 60){
+      colors_arr[PINK].counter++;
+      return PINK;
+    }
+  }
+  
+  return -1;
+  
 }
+
+void BbxColorDetector::counters_restart(){
+  for(int i = 0; i <NUM_COLORS; i++){
+    colors_arr[i].counter = 0;
+  }
+}
+
+Color BbxColorDetector::get_max_color(){
+  int max =  colors_arr[0].counter;
+  int max_pos = 0;
+
+  for(int i = 0; i <NUM_COLORS; i++){
+    if(colors_arr[i].counter > max){
+      max = colors_arr[i].counter;
+      max_pos = i;
+    }
+  }
+  return colors_arr[max_pos];
+}
+
 
 BbxSize BbxColorDetector::box_borders_aliasing(darknet_ros_msgs::BoundingBox box){
 
@@ -291,15 +317,19 @@ BbxSize BbxColorDetector::box_borders_aliasing(darknet_ros_msgs::BoundingBox box
 
   if(ALIASING){
 
-    int b_w = box.xmax - box.xmin;
-    int b_h = box.ymax - box.ymin;
+    int x_wide = box.xmax - box.xmin;
+    int y_high = box.ymax - box.ymin;
 
-    bbx_aliased.x_max = box.xmax - (b_w / COL_ALIASING_FACTOR_TOP);
-    bbx_aliased.x_min = box.xmin + (b_w / COL_ALIASING_FACTOR_BOT);
+    int x_center = box.xmax - (x_wide / 2);
+    int y_center = box.ymax - (y_high / 2);
 
-    bbx_aliased.y_max = box.ymax - (b_h / ROW_ALIASING_FACTOR_BOT);
-    bbx_aliased.y_min = box.ymin + (b_h / ROW_ALIASING_FACTOR_TOP);
+    bbx_aliased.x_max = x_center + (x_wide / X_PX_FACTOR * 2);
+    bbx_aliased.x_min = x_center - (x_wide / X_PX_FACTOR * 2);
+    bbx_aliased.y_max = y_center + (y_high / Y_PX_FACTOR * 2);
+    bbx_aliased.y_min = y_center - (y_high / Y_PX_FACTOR * 2);
 
+    std::cout << "Center X: " << x_center <<  std::endl; 
+    std::cout << "Center Y: " << y_center <<  std::endl;
     std::cout << "PX MIN: " << box.xmin << " Aliased: " << bbx_aliased.x_min << std::endl; 
     std::cout << "PX MAX: " << box.xmax << " Aliased: " << bbx_aliased.x_max << std::endl; 
     std::cout << "PY MAX: " << box.ymax << " Aliased: " << bbx_aliased.y_max << std::endl; 
