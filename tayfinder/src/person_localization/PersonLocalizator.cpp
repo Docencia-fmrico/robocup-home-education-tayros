@@ -41,7 +41,7 @@ PersonLocalizator::PersonLocalizator():
   workingFrameId_("/base_footprint"),
   detectedObject_("person"),
   objectTfName_("bbx_person"),
-  image_sub(nh, "/camera/depth/image_raw", 1),
+  image_sub(nh, "/camera/depth/image_raw", 1), // /camera/depth/image_raw"
   bbx_sub(nh, "/darknet_ros/bounding_boxes", 1),
   sync_bbx(MySyncPolicy_bbx(10), image_sub, bbx_sub)
   {
