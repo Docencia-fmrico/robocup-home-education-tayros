@@ -1,11 +1,10 @@
-pos_x0: 0.008
-pos_y0 : -4.168
-pos_z0: 0.0 # Must be 0.0 for the kobuki
+pos_x0_home: 0.008
+pos_y0_home : -4.168
+orient_w0_home: 1.00
 
-orient_x0: 0.0
-orient_y0: 0.0
-orient_z0: 0.0 # 0.72
-orient_w0: 0.1 # 0.68
+pos_x0_arb: 0.000
+pos_y0_arb: 0.000
+orient_w0_arb: 1.00
 
 # Waiting time to point the bag
 wait_pointing_time: 4.0

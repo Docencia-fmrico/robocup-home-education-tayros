@@ -32,6 +32,32 @@ enum
   GOING_HOME = 2,
 };
 
+void
+get_home_pose(ros::NodeHandle n, move_base_msgs::MoveBaseGoal *home)
+{
+  home->target_pose.header.frame_id = "map";
+  home->target_pose.pose.position.x = n.param("pos_x0_home" , 0.0);
+  home->target_pose.pose.position.y = n.param("pos_y0_home", 0.0);
+  home->target_pose.pose.position.z = n.param("pos_z0_home", 0.0);
+  home->target_pose.pose.orientation.x = n.param("orient_x0_home", 0.0);
+  home->target_pose.pose.orientation.y = n.param("orient_y0_home", 0.0);
+  home->target_pose.pose.orientation.z = n.param("orient_z0_home", 0.0);
+  home->target_pose.pose.orientation.w = n.param("orient_w0_home", 1.0);
+}
+
+void
+get_arb_pose(ros::NodeHandle n, move_base_msgs::MoveBaseGoal *arb)
+{
+  arb->target_pose.header.frame_id = "map";
+  arb->target_pose.pose.position.x = n.param("pos_x0_arb" , 0.0);
+  arb->target_pose.pose.position.y = n.param("pos_y0_arb", 0.0);
+  arb->target_pose.pose.position.z = n.param("pos_z0_arb", 0.0);
+  arb->target_pose.pose.orientation.x = n.param("orient_x0_arb", 0.0);
+  arb->target_pose.pose.orientation.y = n.param("orient_y0_arb", 0.0);
+  arb->target_pose.pose.orientation.z = n.param("orient_z0_arb", 0.0);
+  arb->target_pose.pose.orientation.w = n.param("orient_w0_arb", 1.0);
+}
+
 int main(int argc, char **argv) 
 {
   /* BT creation */
@@ -59,19 +85,16 @@ int main(int argc, char **argv)
 
   /* Blackboard set */
   move_base_msgs::MoveBaseGoal home;
+  move_base_msgs::MoveBaseGoal arb;
+  get_home_pose(n, &home);
+  get_arb_pose(n, &arb);
+  
 
-  home.target_pose.header.frame_id = "map";
-  home.target_pose.pose.position.x = n.param("pos_x0" , 0.0);
-  home.target_pose.pose.position.y = n.param("pos_y0", 0.0);
-  home.target_pose.pose.position.z = n.param("pos_z0", 0.0);
-  home.target_pose.pose.orientation.x = n.param("orient_x0", 0.0);
-  home.target_pose.pose.orientation.y = n.param("orient_y0", 0.0);
-  home.target_pose.pose.orientation.z = n.param("orient_z0", 0.0);
-  home.target_pose.pose.orientation.w = n.param("orient_w0", 1.0);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("Home", home);
   blackboard->set("goal", home);
+  blackboard->set("arb", arb);
 
   BT::Tree follow = factory.createTreeFromFile(follow_path, blackboard);
   BT::Tree back_home = factory.createTreeFromFile(back_home_path, blackboard);
