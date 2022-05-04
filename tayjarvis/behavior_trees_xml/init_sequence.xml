@@ -2,7 +2,7 @@
      <BehaviorTree ID="personRecognize">
 
         <Sequence name="root_sequence">
-            
+            <Move name="move_to_arb" pos="{arb}">
             <Welcome_human name="Welcome_human"/>
             <!--Move to somewhere¿?-->
             <Localize_suitcase name="Localize_suitcase"/>

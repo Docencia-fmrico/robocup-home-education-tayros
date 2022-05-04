@@ -24,7 +24,7 @@ BT::NodeStatus
 Welcome_human::tick()
 {
   gb_dialog::DialogManager speaker;
-  speaker.welcomeHuman();
+  speaker.welcomeHumanCML();
   
   return BT::NodeStatus::SUCCESS;
 }  

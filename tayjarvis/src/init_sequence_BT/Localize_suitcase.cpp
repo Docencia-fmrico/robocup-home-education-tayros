@@ -74,7 +74,7 @@ Localize_suitcase::tick()
     last_time_ = current_time_;
     activation_pub_.publish(activation_);
 
-    speaker_.pointBag();
+    speaker_.pointBag(0);
     counter_++;
   }
 
