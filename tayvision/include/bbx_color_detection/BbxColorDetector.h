@@ -31,8 +31,8 @@ namespace bbx_color_detection
 {
 
 enum{
-  COL_SEGMETS = 10,
-  ROW_SEGMETS = 10,
+  COL_SEGMETS = 1,
+  ROW_SEGMETS = 1,
 };
 
 typedef struct
@@ -44,12 +44,6 @@ typedef struct
 
 typedef struct
 {
-  int rupper; 
-  int rlower;
-  int gupper; 
-  int glower;
-  int bupper; 
-  int blower;
   int counter;
   std::string name;
 }Color;
@@ -67,12 +61,10 @@ class BbxColorDetector
 public:
   BbxColorDetector();
   void callback_bbx(const sensor_msgs::ImageConstPtr& image, const darknet_ros_msgs::BoundingBoxesConstPtr& boxes);
-  void rgb_from_bbx(darknet_ros_msgs::BoundingBox box, BbxSize bbx_size, cv::Mat src_hsv, Rgb result_hsv[COL_SEGMETS][ROW_SEGMETS], bool debug);
-  bool check_color(Rgb rgb_data , Color color);
-  BbxSize box_borders_aliasing(darknet_ros_msgs::BoundingBox box);
 
 private:
   ros::NodeHandle nh;
+  ros::Publisher color_pub_;
 
   const bool DEBUG = true;
   const bool IMAGE_DEBUG = true;
@@ -91,21 +83,30 @@ private:
 
   float last_distance_;  // Save last distance measured
   float last_angle_;
-  int restart_counter;
-  bool bbx_restart;
-  
+  bool restart_;
+  bool activation_;
+
+  const int PUBLISH_THRESHOLD = 200;
   // ---------------------- Color identification ---------------------- //
   static const int NUM_COLORS = 8;
   Color colors_arr[NUM_COLORS];
   Color black;
+  Color white;
   Color red;
+  Color pink;
+  Color light_blue;
+  Color yellow;
   Color green;
   Color blue;
-  Color yellow;
-  Color magenta;
-  Color white;
-  Color orange;
-  Color whithe;
+  
+  const int BLACK = 0;
+  const int WHITE = 1;
+  const int RED = 2;
+  const int PINK = 3;
+  const int LIGHT_BLUE = 4;
+  const int YELLOW = 5;
+  const int GREEN = 6; 
+  const int BLUE = 7;
   // ---------------------- ------------------- ---------------------- //
 
  // ---------------------- Image Debug ---------------------- //
@@ -115,16 +116,22 @@ private:
   // ---------------------- ----------- ---------------------- //
 
   // ---------------------- Border Aliasing ---------------------- //
-  const int COL_ALIASING_FACTOR_TOP = 10; /* bbx crop part, if 10 1/10 of the image croped */
-  const int COL_ALIASING_FACTOR_BOT = 10;
-  const int ROW_ALIASING_FACTOR_TOP = 5;
-  const int ROW_ALIASING_FACTOR_BOT = 100;
+  const float X_PX_FACTOR  = 30; // The % of drecrease in function of init bbx
+  const float Y_PX_FACTOR  = 30;
   const bool ALIASING = true;
   // ---------------------- --------------- ---------------------- //
   
   std::string detectedObject_;
   std::string TopicID;
   std::string workingFrameId_;
+  std::string TopicColorPub;
+
+  void rgb_from_bbx(darknet_ros_msgs::BoundingBox box, BbxSize bbx_size, cv::Mat src_hsv, Rgb result_hsv[COL_SEGMETS][ROW_SEGMETS], bool debug);
+  int detect_color(Rgb rgb_data);
+  BbxSize box_borders_aliasing(darknet_ros_msgs::BoundingBox box);
+  void counters_restart();
+  Color get_max_color();
+
 };
 }  // namespace bbx_color_detector
 
