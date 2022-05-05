@@ -2,7 +2,7 @@
      <BehaviorTree ID="backHome">
 
         <ReactiveSequence name="root_sequence">
-             <!--<Move name="goHome" pos="{Home}"/> -->
+            <Move name="goHome" pos="{Home}"/> 
             <Say_data name="sayData" data="{Description}"/>
         </ReactiveSequence>
 

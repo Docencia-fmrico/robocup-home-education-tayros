@@ -101,6 +101,7 @@ private:
 	bool is_saved(PersonPoint3D point);
 	int get_zone(PersonPoint3D point);
 	PersonPoint3D get_3d_map_point();
+	void restart_person_data(PersonPoint3D point);
 	
 	std::string detectedObject_;
 	std::string TopicID;

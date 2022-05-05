@@ -41,7 +41,7 @@ IsAnyMate::tick()
     return BT::NodeStatus::SUCCESS;
   }
 
-  return BT::NodeStatus::FAILURE;
+  return BT::NodeStatus::RUNNING;
 }  // namespace find_mate
 
 void 

@@ -31,6 +31,19 @@ enum
   INFORM_REFEREE = 2,
 };
 
+void
+get_arb_pose(ros::NodeHandle n, move_base_msgs::MoveBaseGoal *home)
+{
+  home->target_pose.header.frame_id = "map";
+  home->target_pose.pose.position.x = n.param("pos_x0_home" , 0.99);
+  home->target_pose.pose.position.y = n.param("pos_y0_home", 4.99);
+  home->target_pose.pose.position.z = n.param("pos_z0_home", 0.0);
+  home->target_pose.pose.orientation.x = n.param("orient_x0_home", 0.0);
+  home->target_pose.pose.orientation.y = n.param("orient_y0_home", 0.0);
+  home->target_pose.pose.orientation.z = n.param("orient_z0_home", 0.0);
+  home->target_pose.pose.orientation.w = n.param("orient_w0_home", 1.0);
+}
+
 int main(int argc, char **argv) 
 {
   /* BT creation */
@@ -57,16 +70,19 @@ int main(int argc, char **argv)
   move_base_msgs::MoveBaseGoal home;
 
   home.target_pose.header.frame_id = "map";
-  home.target_pose.pose.position.x = n.param("pos_x0" , 3.0);
-  home.target_pose.pose.position.y = n.param("pos_y0", 0.0);
+  home.target_pose.pose.position.x = n.param("pos_x0" , 4.5);
+  home.target_pose.pose.position.y = n.param("pos_y0", 0.47);
   home.target_pose.pose.position.z = n.param("pos_z0", 0.0);
   home.target_pose.pose.orientation.x = n.param("orient_x0", 0.0);
   home.target_pose.pose.orientation.y = n.param("orient_y0", 0.0);
-  home.target_pose.pose.orientation.z = n.param("orient_z0", 0.0);
-  home.target_pose.pose.orientation.w = n.param("orient_w0", 1.0);
+  home.target_pose.pose.orientation.z = n.param("orient_z0", -0.99);
+  home.target_pose.pose.orientation.w = n.param("orient_w0", 0.12);
+  move_base_msgs::MoveBaseGoal arb;
+  get_arb_pose(n, &arb);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("Home", home);
+  blackboard->set("arb", arb);
   int counter = 0;
   taymsgs::person_data Person_data;
   blackboard->set("data", Person_data);

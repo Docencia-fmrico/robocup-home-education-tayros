@@ -64,7 +64,7 @@ private:
   std::string object_name_;
 
 
-  static const int OBJECTS_NUM = 4;
+  static const int OBJECTS_NUM = 3;
   std::string object_list[OBJECTS_NUM];
   bool is_searched_object(darknet_ros_msgs::BoundingBox box);
 
