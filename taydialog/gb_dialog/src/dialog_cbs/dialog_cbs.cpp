@@ -193,7 +193,7 @@ DialogManager::carReachedCB(dialogflow_ros_msgs::DialogflowResult result)
   ROS_INFO("[TAY_DIALOG] carReachedCB: intent [%s]", result.intent.c_str());
   carReached_ = result.fulfillment_text;
   questionAsked_ = true;
-  movementIndications(1);
+  //movementIndications(1);
 }
   
 void

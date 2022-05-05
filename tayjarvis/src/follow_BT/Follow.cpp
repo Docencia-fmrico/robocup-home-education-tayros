@@ -30,6 +30,7 @@ Follow::halt()
 BT::NodeStatus
 Follow::tick()
 {
+  ROS_INFO("Following.......");
   std_msgs::Int32 state;
   state.data = GO;
   act_pub_.publish(state);

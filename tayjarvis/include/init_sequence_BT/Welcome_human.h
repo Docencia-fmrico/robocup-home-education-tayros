@@ -17,7 +17,7 @@
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
-
+#include "dialog_cbs/dialog_cbs.h"
 #include <string>
 #include "std_msgs/Int32.h"
 #include "ros/ros.h"
@@ -42,6 +42,7 @@ class Welcome_human : public BT::ActionNodeBase
   private: 
     ros::NodeHandle nh_;
     bool first_execute_ = true;
+    gb_dialog::DialogManager speaker;
 };
 
 }  // namespace PERSON_RECOGNIZE

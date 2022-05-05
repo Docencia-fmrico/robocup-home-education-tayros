@@ -60,6 +60,7 @@ SetGoal::tick()
 void
 SetGoal::callback(const move_base_msgs::MoveBaseGoal::ConstPtr& msg)
 {
+  ROS_INFO("Goal setted...........");
   goal_ = *msg;
   goal_.target_pose.header.frame_id = "map";
   ROS_INFO("I recived the message");

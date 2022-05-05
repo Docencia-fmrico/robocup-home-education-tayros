@@ -16,7 +16,7 @@
 #include <memory>
 
 #include "ros/ros.h"
-
+#include "dialog_cbs/dialog_cbs.h"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "behaviortree_cpp_v3/utils/shared_library.h"
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
   home.target_pose.pose.orientation.y = n.param("orient_y0", 0.0);
   home.target_pose.pose.orientation.z = n.param("orient_z0", 0.0);
   home.target_pose.pose.orientation.w = n.param("orient_w0", 1.0);
-
+  gb_dialog::DialogManager speaker;
   auto blackboard = BT::Blackboard::create();
   blackboard->set("Home", home);
   int counter = 0;
@@ -76,7 +76,12 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(10);
 
-  int state = FIND_MATE;
+  int state = -1;
+  while (speaker.startNav(3) != "true")
+  {
+      
+  }
+  state = FIND_MATE;
   bool finish = false;
 
   /* Bt sequence */
