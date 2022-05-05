@@ -49,12 +49,20 @@ PersonLocalizator::PersonLocalizator():
     feedback_sub_ = nh.subscribe<std_msgs::Int32>("/tayros/person/feedback", 10, &PersonLocalizator::callback_feedback, this);
     person_info_pub_ = nh.advertise<taymsgs::person_info>("/tayros/person_info", 1);
     restart_person_status();
-
+    
+    /* DEBUGGGGGGGGG
     zones[0].id = 1;
     zones[0].minX = 0.1794237494468689;
     zones[0].maxX = 2.13232159614563;
     zones[0].minY = 7.347957611083984;
     zones[0].maxY = 8.730541229248047;
+    */
+
+    zones[0].id = 1;
+    zones[0].minX = -40.0;
+    zones[0].maxX = 40.0;
+    zones[0].minY = -40.0;
+    zones[0].maxY = 40.0;
 
     zones[1].id = 2;
     zones[1].minX = -2.674506664276123;

@@ -19,6 +19,7 @@
 #include <message_filters/time_synchronizer.h>
 #include <message_filters/sync_policies/approximate_time.h>
 #include <cv_bridge/cv_bridge.h>
+#include "std_msgs/Int32.h"
 #include <sensor_msgs/Image.h>
 #include <darknet_ros_msgs/BoundingBoxes.h>
 #include "std_msgs/String.h"
@@ -33,10 +34,12 @@ class BbxObjectDetector
 public:
   BbxObjectDetector();
   void callback_bbx(const sensor_msgs::ImageConstPtr& image, const darknet_ros_msgs::BoundingBoxesConstPtr& boxes);
-  
+  void callback_activation(const std_msgs::Int32::ConstPtr& activator);
+
 private:
   ros::NodeHandle nh;
   ros::Publisher object_pub_;
+  ros::Subscriber activation_sub_;
 
   typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image,
   darknet_ros_msgs::BoundingBoxes> MySyncPolicy_bbx;

@@ -22,7 +22,7 @@
 #include <sensor_msgs/Image.h>
 #include <darknet_ros_msgs/BoundingBoxes.h>
 #include <image_transport/image_transport.h>
-#include <string>
+#include "std_msgs/Int32.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <string>
@@ -61,10 +61,13 @@ class BbxColorDetector
 public:
   BbxColorDetector();
   void callback_bbx(const sensor_msgs::ImageConstPtr& image, const darknet_ros_msgs::BoundingBoxesConstPtr& boxes);
+  void callback_activation(const std_msgs::Int32::ConstPtr& activator);
 
 private:
   ros::NodeHandle nh;
   ros::Publisher color_pub_;
+  ros::Subscriber activation_sub_;
+
 
   const bool DEBUG = true;
   const bool IMAGE_DEBUG = true;

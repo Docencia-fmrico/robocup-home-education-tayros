@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "std_msgs/String.h"
+#include "std_msgs/Int32.h"
 #include <image_transport/image_transport.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -35,12 +36,14 @@ BbxColorDetector::BbxColorDetector():
   workingFrameId_("/base_footprint"),
   detectedObject_("person"),
   TopicColorPub("tayvision/person/color"),
-  image_sub(nh, "/usb_cam/image_raw", 1),
+  image_sub(nh, "camera/rgb/image_raw", 1),
   bbx_sub(nh, "/darknet_ros/bounding_boxes", 1),
   sync_bbx(MySyncPolicy_bbx(10), image_sub, bbx_sub)
   {
     sync_bbx.registerCallback(boost::bind(&BbxColorDetector::callback_bbx, this, _1, _2));
     color_pub_ = nh.advertise<std_msgs::String>(TopicColorPub, 1);
+    activation_sub_ = nh.subscribe<std_msgs::Int32>("/tayvision/color/activation", 1, &BbxColorDetector::callback_activation, this);
+    activation_ = false;
 
 		image_pub_ = it_.advertise("/object_filtered_debug/image/person", 1);
     cv::namedWindow("Imagen filtrada");
@@ -71,104 +74,114 @@ BbxColorDetector::BbxColorDetector():
 
     counters_restart();
     restart_ = true;
-    }
+  }
+
+
+void 
+BbxColorDetector::callback_activation(const std_msgs::Int32::ConstPtr& activator){
+  activation_ = (bool)activator->data;
+  restart_ = (bool)activator->data;
+}
+
 
 void BbxColorDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
   const darknet_ros_msgs::BoundingBoxesConstPtr& boxes)
 {
-  cv_bridge::CvImagePtr img_ptr;
-  cv_bridge::CvImagePtr cv_imageout;
+  if(activation_){
+    cv_bridge::CvImagePtr img_ptr;
+    cv_bridge::CvImagePtr cv_imageout;
 
-  try
-  {
-    img_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);
-    cv_imageout = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);
-  }
-  catch (cv_bridge::Exception& e)
-  {
-      ROS_ERROR("cv_bridge exception:  %s", e.what());
-      return;
-  }
+    try
+    {
+      img_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);
+      cv_imageout = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);
+    }
+    catch (cv_bridge::Exception& e)
+    {
+        ROS_ERROR("cv_bridge exception:  %s", e.what());
+        return;
+    }
 
-  cv::Mat rgb;
-	rgb = img_ptr->image;
-	int step = rgb.step;
+    cv::Mat rgb;
+    rgb = img_ptr->image;
+    int step = rgb.step;
 
-  if(restart_){
-    restart_ = false;
-    counters_restart();
-  }
+    if(restart_){
+      restart_ = false;
+      counters_restart();
+    }
 
-	for (const auto & box : boxes->bounding_boxes)
-  {
-    
-    BbxSize bbx_aliased;
-    bbx_aliased = box_borders_aliasing(box);
+    for (const auto & box : boxes->bounding_boxes)
+    {
+      
+      BbxSize bbx_aliased;
+      bbx_aliased = box_borders_aliasing(box);
 
-    Rgb  rgb_current_values[COL_SEGMETS][ROW_SEGMETS];
-    rgb_from_bbx(box, bbx_aliased, rgb, rgb_current_values, DEBUG);
+      Rgb  rgb_current_values[COL_SEGMETS][ROW_SEGMETS];
+      rgb_from_bbx(box, bbx_aliased, rgb, rgb_current_values, DEBUG);
 
-    // Color study 
-    for(int col = 0; col < COL_SEGMETS; col++){
-				for(int row = 0; row < ROW_SEGMETS; row++){
-          detect_color(rgb_current_values[col][row]);
+      // Color study 
+      for(int col = 0; col < COL_SEGMETS; col++){
+          for(int row = 0; row < ROW_SEGMETS; row++){
+            detect_color(rgb_current_values[col][row]);
+          }
         }
+
+
+      // Results
+      for (int i = 0; i < NUM_COLORS; i++){
+        std::cout <<  "Color: "<<  colors_arr[i].name << ":\t" << colors_arr[i].counter << std::endl;
       }
 
+      Color max_color;
+      max_color = get_max_color();
 
-    // Results
-    for (int i = 0; i < NUM_COLORS; i++){
-      std::cout <<  "Color: "<<  colors_arr[i].name << ":\t" << colors_arr[i].counter << std::endl;
+      if(max_color.counter > PUBLISH_THRESHOLD){
+        std_msgs::String pub_color;
+        pub_color.data = max_color.name;
+        color_pub_.publish(pub_color);
+      }
+
+      if(IMAGE_DEBUG){
+        
+        int step = rgb.step;
+
+        int px_width = bbx_aliased.x_max - bbx_aliased.x_min;
+        int py_height = bbx_aliased.y_max - bbx_aliased.y_min;
+
+        int px_width_segment = px_width / COL_SEGMETS;
+        int py_height_segment = py_height / ROW_SEGMETS;
+
+        int current_px =  bbx_aliased.x_min;
+        int current_py =  bbx_aliased.y_min;
+
+
+        //std::cout << "INITcurrent_px: " << current_px << " INITcurrent_py: " << current_py << std::endl; 
+
+        for(int col = 0; col < COL_SEGMETS; col++){
+          for(int row = 0; row < ROW_SEGMETS; row++){
+            
+            for(int i = current_px; i < (current_px + px_width_segment); i++){
+              for(int j = current_py; j < (current_py + py_height_segment) ; j++){
+                int position = i * CHANNELS + j * step;              
+                cv_imageout->image.data[position] = rgb_current_values[col][row].b;
+                cv_imageout->image.data[position+1] = rgb_current_values[col][row].g;
+                cv_imageout->image.data[position+2] = rgb_current_values[col][row].r;
+              }
+            }
+            current_py += py_height_segment;
+          }
+          current_px += px_width_segment;
+          current_py = bbx_aliased.y_min;
+        }
+      }
     }
 
-    Color max_color;
-    max_color = get_max_color();
-
-    if(max_color.counter > PUBLISH_THRESHOLD){
-      std_msgs::String pub_color;
-      pub_color.data = max_color.name;
-      color_pub_.publish(pub_color);
+    if(IMAGE_DEBUG){
+      cv::imshow("Imagen filtrada", cv_imageout->image);
+      cv::waitKey(3);
+      image_pub_.publish(cv_imageout->toImageMsg());
     }
-
-		if(IMAGE_DEBUG){
-			
-			int step = rgb.step;
-
-      int px_width = bbx_aliased.x_max - bbx_aliased.x_min;
-      int py_height = bbx_aliased.y_max - bbx_aliased.y_min;
-
-      int px_width_segment = px_width / COL_SEGMETS;
-      int py_height_segment = py_height / ROW_SEGMETS;
-
-      int current_px =  bbx_aliased.x_min;
-      int current_py =  bbx_aliased.y_min;
-
-
-			//std::cout << "INITcurrent_px: " << current_px << " INITcurrent_py: " << current_py << std::endl; 
-
-			for(int col = 0; col < COL_SEGMETS; col++){
-				for(int row = 0; row < ROW_SEGMETS; row++){
-					
-					for(int i = current_px; i < (current_px + px_width_segment); i++){
-						for(int j = current_py; j < (current_py + py_height_segment) ; j++){
-							int position = i * CHANNELS + j * step;              
-							cv_imageout->image.data[position] = rgb_current_values[col][row].b;
-							cv_imageout->image.data[position+1] = rgb_current_values[col][row].g;
-							cv_imageout->image.data[position+2] = rgb_current_values[col][row].r;
-						}
-					}
-					current_py += py_height_segment;
-				}
-				current_px += px_width_segment;
-				current_py = bbx_aliased.y_min;
-			}
-		}
-	}
-
-	if(IMAGE_DEBUG){
-    cv::imshow("Imagen filtrada", cv_imageout->image);
-    cv::waitKey(3);
-    image_pub_.publish(cv_imageout->toImageMsg());
   }
 
 }

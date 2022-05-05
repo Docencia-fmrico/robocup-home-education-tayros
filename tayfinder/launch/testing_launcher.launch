@@ -1,0 +1,38 @@
+<launch>
+
+  <include file="$(find darknet_ros)/launch/darknet_ros.launch">
+    <arg name="image"  value="/camera/rgb/image_raw"/>
+		<!-- "/usb_cam/image_raw" --> <!-- "/camera/rgb/image_raw" -->
+  </include>
+
+    <!--
+  <include file="$(find navigation)/launch/navigation.launch">
+    <arg name="map_file" default="$(find navigation)/maps/GrannieAnnie.yaml"/>
+		"GrannieAnnie.yaml --> <!-- "lab1.yaml"
+  </include>
+  -->
+
+
+  <node 
+	pkg="tayfinder" type="bbxs_to_3dpoint" name="Bbxs_To_3d" output="log">
+  </node>
+
+  <node 
+	pkg="tayfinder" type="person_localizator" name="person_localizator" output="log">
+  </node>
+
+    <!--
+  <node 
+	pkg="tayfinder" type="take_person_info_node" name="take_person_info_node" output="screen">
+  </node>
+  -->
+
+  <node 
+	pkg="tayvision" type="bbx_color_detector_node" name="bbx_color_detector_node" output="log">
+  </node>
+
+  <node 
+	pkg="tayvision" type="bbx_object_detector_node" name="bbx_object_detector_node" output="log">
+  </node>
+
+</launch>

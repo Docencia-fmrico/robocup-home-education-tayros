@@ -39,7 +39,9 @@
 // MODIFIED BY 2022 TayRos. Rey Juan Carlos University, Software Robotics Eng.
 #include <gb_dialog/DialogInterface.h>
 #include <dialog_cbs/dialog_cbs.h>
+#include <std_msgs/String.h>
 #include <string>
+#include "std_msgs/Int32.h"
 
 namespace ph = std::placeholders;
 
@@ -61,11 +63,17 @@ DialogManager::DialogManager()
   this->registerCallback(
       std::bind(&DialogManager::startNavCB, this, ph::_1),
       "readyToMove");
+
+  name_pub_ = nh_.advertise<std_msgs::String>("/taydialog/person/name", 1);
+  activation_sub_ = nh_.subscribe<std_msgs::Int32>("/taydialog/name/activation", 1, &DialogManager::callback_activation, this);
+
   pointedBag_ = "none";
   carReached_ = "false";
   readyToMove_ = "false";
   personName_ = "none";
   questionAsked_ = false;
+  activation_ = true;
+  name_restart_ = true;
 }
 
 void
@@ -211,6 +219,14 @@ DialogManager::welcomeHumanFMM()
   ros::Duration(6,0).sleep();
 }
 
+void 
+DialogManager::callback_activation(const std_msgs::Int32::ConstPtr& activator){
+  activation_ = (bool)activator->data;
+  name_restart_= (bool)activator->data;
+}
+
+
+
 std::string
 DialogManager::askForName(int flag)
 {
@@ -226,6 +242,7 @@ DialogManager::askForName(int flag)
     std::cout << "-------------------------------------------------" << std::endl;
     std::cout << "[TAY_DIALOG] person name is: " << personName_ << std::endl;
     std::cout << "-------------------------------------------------" << std::endl;
+    return personName_;
   }
   return personName_;
 }
@@ -233,10 +250,17 @@ DialogManager::askForName(int flag)
 void
 DialogManager::askForNameCB(dialogflow_ros_msgs::DialogflowResult result)
 {
-  ROS_INFO("[TAY_DIALOG] askForNameCB:");
-  personName_ = result.fulfillment_text;
-  questionAsked_ = true;
-  askForName(1);
+  if(name_restart_){
+    personName_ = "none";
+  }
+  if(activation_){  
+    ROS_INFO("[TAY_DIALOG] askForNameCB:");
+    personName_ = result.fulfillment_text;
+    questionAsked_ = true;
+    std_msgs::String name;
+    name.data = personName_;
+    name_pub_.publish(name);
+  }
 }
 
 void
