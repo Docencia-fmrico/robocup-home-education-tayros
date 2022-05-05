@@ -17,7 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 	INCLUDE_DIRS include
 	LIBRARIES gb_dialog
-	CATKIN_DEPENDS roscpp dialogflow_ros_msgs actionlib_msgs
+	CATKIN_DEPENDS roscpp dialogflow_ros_msgs actionlib_msgs std_msgs
 	DEPENDS
 )
 

@@ -25,11 +25,18 @@ PersonInfo::PersonInfo()
     person_info_sub_ =  nh_.subscribe<taymsgs::person_info>("/tayros/person_info", 10, &PersonInfo::callback_person_info, this);
     person_color_sub_ =  nh_.subscribe<std_msgs::String>("/tayvision/person/color", 10, &PersonInfo::callback_person_color_info, this);
     person_object_sub_ =  nh_.subscribe<std_msgs::String>("/tayvision/person/object_info", 10, &PersonInfo::callback_person_object_info, this);
+    person_info_name_ = nh_.subscribe<std_msgs::String>("/taydialog/person/name", 1,  &PersonInfo::callback_person_name, this);
     person_feedback_pub_ = nh_.advertise<std_msgs::Int32>("/tayros/person/feedback", 1);
+    color_activation_pub_ = nh_.advertise<std_msgs::Int32>("/tayvision/color/activation", 1);
+    object_activation_pub_ = nh_.advertise<std_msgs::Int32>("/tayvision/object/activation", 1);
+    name_activation_pub_ = nh_.advertise<std_msgs::Int32>("/taydialog/name/activation", 1);
+
+
     person_taked_ = false;
     person_color_taked = true;
     person_object_taked = true;
-    name_taked_ = false;
+    name_taked_ = true;
+    first_time_ = true;
     
 }
 
@@ -43,6 +50,16 @@ PersonInfo::callback_person_info(const taymsgs::person_info::ConstPtr& person)
         current_person_.goal = person->position;
         person_taked_ = true;
     }
+}
+
+void 
+PersonInfo::callback_person_name(const std_msgs::String::ConstPtr& name)
+{
+    if(!name_taked_){
+        current_person_.name = name->data;
+        name_taked_ = true;
+    }
+
 }
 
 void
@@ -69,25 +86,72 @@ PersonInfo::callback_person_object_info(const std_msgs::String::ConstPtr& object
 bool
 PersonInfo::getPersonName()
 {
-    gb_dialog::DialogManager player;
-    current_person_.name = player.askForName(0);
-    return true;
+    if(!name_taked_){
+        gb_dialog::DialogManager player;
+        player.askForName(0);
+        std::cout << "el puto nombre es" << player.getPersonName() << std::endl;
+        if(player.getPersonName() != "none")
+        {
+            current_person_.name = player.getPersonName();
+            return true;
+        }
+        return false;
+    }
+    else{
+        return true;
+    }
+    
 }
 
 void
 PersonInfo::step()
 {
+    std::cout << "**********************************************"<< std::endl;
+    std::cout << "Person BOOL: " << person_taked_ << std::endl;
+    std::cout << "Object BOOL: " << person_object_taked << std::endl;
+    std::cout << "Name BOOL: " << name_taked_ << std::endl;
+    std::cout << "COLOR BOOL: " << person_color_taked << std::endl;
+    std::cout << "**********************************************"<< std::endl;
+
+    /*
+    std::cout << "Person Taked: " << current_person_.id << std::endl;
+    std::cout << "Object Taked: " << current_person_.object << std::endl;
+    std::cout << "Name Taked: " << current_person_.name << std::endl;
+    std::cout << "COLOR Taked: " <<  current_person_.colorShirt<< std::endl;
+    */
+
+
     if(person_taked_)
     {
         // Publicar goal 
 
         // If goal succes 
-        person_color_taked = false;
-        person_object_taked = false;
-        name_taked_ = getPersonName();
+
+        // Activamos todos los nodos y el almacenamiento
+        if(first_time_){
+            person_color_taked = false;
+            person_object_taked = false;
+            name_taked_ = false;
+
+            std_msgs::Int32 activation;
+            activation.data = 1;
+            color_activation_pub_.publish(activation);
+            object_activation_pub_.publish(activation);
+            name_activation_pub_.publish(activation);
+            first_time_ = false;
+        }
+        // ACTIVAR COLOR Y OBJECT
+       
 
         if(person_color_taked && person_object_taked && name_taked_)
         {   
+
+            std_msgs::Int32 activation;
+            activation.data = 0;
+            color_activation_pub_.publish(activation);
+            object_activation_pub_.publish(activation);
+            name_activation_pub_.publish(activation);
+
             std_msgs::Int32 feedback_id;
             feedback_id.data = current_person_.id;
             person_feedback_pub_.publish(feedback_id);
@@ -105,6 +169,7 @@ PersonInfo::step()
             if(true)
             {
                 person_taked_ = false;
+                first_time_ = true;
             }
             
         }

@@ -43,6 +43,8 @@ public:
     void callback_person_info(const taymsgs::person_info::ConstPtr& person);
     void callback_person_color_info(const std_msgs::String::ConstPtr& color);
     void callback_person_object_info(const std_msgs::String::ConstPtr& object);
+    void callback_person_name(const std_msgs::String::ConstPtr& name);
+
     bool getPersonName();
     void step();
 
@@ -51,11 +53,18 @@ private:
     ros::Subscriber person_info_sub_;
     ros::Subscriber person_color_sub_;
     ros::Subscriber person_object_sub_;
+    ros::Subscriber person_info_name_;
     ros::Publisher person_feedback_pub_;
+    ros::Publisher color_activation_pub_;
+    ros::Publisher object_activation_pub_;
+    ros::Publisher name_activation_pub_;
+
+
 
     t_personInfo current_person_;
 
     bool person_taked_;
+    bool first_time_;
 
     bool person_color_taked;
     bool person_object_taked;

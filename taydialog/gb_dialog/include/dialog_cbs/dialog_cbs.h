@@ -53,6 +53,8 @@ public:
 
 private:
     ros::NodeHandle nh_;
+    ros::Publisher name_pub_;
+
 
     std::string pointedBag_;
     std::string readyToMove_;

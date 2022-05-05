@@ -39,6 +39,7 @@
 // MODIFIED BY 2022 TayRos. Rey Juan Carlos University, Software Robotics Eng.
 #include <gb_dialog/DialogInterface.h>
 #include <dialog_cbs/dialog_cbs.h>
+#include <std_msgs/String.h>
 #include <string>
 
 namespace ph = std::placeholders;
@@ -61,6 +62,8 @@ DialogManager::DialogManager()
   this->registerCallback(
       std::bind(&DialogManager::startNavCB, this, ph::_1),
       "readyToMove");
+
+  name_pub_ = nh_.advertise<std_msgs::String>("/taydialog/person/name", 1);
   pointedBag_ = "none";
   carReached_ = "false";
   readyToMove_ = "false";
@@ -226,6 +229,7 @@ DialogManager::askForName(int flag)
     std::cout << "-------------------------------------------------" << std::endl;
     std::cout << "[TAY_DIALOG] person name is: " << personName_ << std::endl;
     std::cout << "-------------------------------------------------" << std::endl;
+    return personName_;
   }
   return personName_;
 }
@@ -236,6 +240,9 @@ DialogManager::askForNameCB(dialogflow_ros_msgs::DialogflowResult result)
   ROS_INFO("[TAY_DIALOG] askForNameCB:");
   personName_ = result.fulfillment_text;
   questionAsked_ = true;
+  std_msgs::String name;
+  name.data = personName_;
+  name_pub_.publish(name);
   askForName(1);
 }
 
