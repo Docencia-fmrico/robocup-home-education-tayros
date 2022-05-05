@@ -18,10 +18,10 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include <move_base_msgs/MoveBaseAction.h>
-
+#include "std_msgs/Bool.h"
 #include <string>
-
 #include "ros/ros.h"
+#include "taymsgs/person_data.h"
 
 namespace Back_home
 {
@@ -37,13 +37,15 @@ class Say_data : public BT::ActionNodeBase
 
     static BT::PortsList providedPorts()
     {
-      return { BT::InputPort<int>("data")};
+      return { BT::InputPort<taymsgs::person_data>("data")};
     }
 
   private:
     ros::NodeHandle nh_;
-    int data_;
-    const int NUM_OF_MATES_ = 3;
+    ros::Publisher data_comunicated_pub_;
+
+    std_msgs::Bool comunicated_;
+    taymsgs::person_data data_;
 };
 
 }  // namespace Back_home

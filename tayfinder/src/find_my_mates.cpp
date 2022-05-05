@@ -22,7 +22,7 @@
 #include "behaviortree_cpp_v3/utils/shared_library.h"
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 #include <move_base_msgs/MoveBaseAction.h>
-
+#include "taymsgs/person_data.h"
 #include "ros/package.h"
 
 enum
@@ -67,8 +67,9 @@ int main(int argc, char **argv)
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("Home", home);
-  int data, counter = 0;
-  blackboard->set("data", data);
+  int counter = 0;
+  taymsgs::person_data Person_data;
+  blackboard->set("data", Person_data);
 
   BT::Tree find_mate = factory.createTreeFromFile(find_mate_path, blackboard);
   BT::Tree inform_referee = factory.createTreeFromFile(inform_referee_path, blackboard);

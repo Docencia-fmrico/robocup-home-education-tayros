@@ -1,8 +1,11 @@
 #include <string>
 #include "back_home_BT/Say_data.h"
 #include "behaviortree_cpp_v3/behavior_tree.h"
+#include "std_msgs/Bool.h"
 #include "ros/ros.h"
 #include <unistd.h>
+#include "taymsgs/person_data.h"
+#include "std_msgs/Int32.h"
 
 
 namespace Back_home
@@ -11,6 +14,9 @@ namespace Back_home
 Say_data::Say_data(const std::string& name,  const BT::NodeConfiguration & config)
 : BT::ActionNodeBase(name, config)
 {
+  data_comunicated_pub_ = nh_.advertise<std_msgs::Bool>("/tayfinder/data_comunicated", 1);
+
+  comunicated_.data = false;
 }
 
 void
@@ -21,9 +27,13 @@ Say_data::halt()
 BT::NodeStatus
 Say_data::tick()
 {
-  data_ = getInput<int>("data").value();
-  ROS_INFO("Números de atras de la tarjeta bancaria: %d", data_);
-
+  comunicated_.data = true;
+  
+  data_ = getInput<taymsgs::person_data>("data").value();
+  std_msgs::Int32 a;
+  a.data = data_.zone;
+  ROS_INFO("Your name is %d\n", a.data);  
+  data_comunicated_pub_.publish(comunicated_);
   return BT::NodeStatus::SUCCESS;
 }  // namespace Back_home
 

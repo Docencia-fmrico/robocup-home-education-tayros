@@ -44,7 +44,13 @@ class IsAnyMate : public BT::ActionNodeBase
   private:
     ros::NodeHandle nh_;
     ros::Publisher mov_pub_;
+    ros::Subscriber pos_sub_;
+
+    void pos_callback(const move_base_msgs::MoveBaseGoal::ConstPtr& msg);
+
     std_msgs::Int32 move_;
+    move_base_msgs::MoveBaseGoal goal_;
+    bool cord_received_;
 };
 
 }  // namespace find_mate

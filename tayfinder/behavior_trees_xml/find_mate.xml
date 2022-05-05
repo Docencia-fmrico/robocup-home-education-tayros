@@ -2,11 +2,11 @@
      <BehaviorTree ID="findMateTree">
 
         <Sequence name="root_sequence">
-            <ReactiveSequence>
-                <Bump_go name="search_node"/>     <!--Always true-->
+            <!--<ReactiveSequence>
+                <Bump_go name="search_node"/>     <!-Always true--><!--
                 <Is_any_mate name="is_any_mate" pos="{target}"/>
             </ReactiveSequence>
-            <Move name="goToMate" pos="{target}"/>
+            <Move name="goToMate" pos="{target}"/> -->
             <Get_mate_data name="Get_mate_data" data="{Description}"/>
         </Sequence>
 

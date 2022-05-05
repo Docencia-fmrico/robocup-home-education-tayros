@@ -33,7 +33,7 @@ SetGoal::SetGoal() : nh_("~")
 
   transform_made_ = false;
 
-  std::string mov_publisher =  nh_.param("tf_to_pos_topic", std::string("/tayros/tf_to_poses"));
+  std::string mov_publisher =  nh_.param("tf_to_pos_topic", std::string("/tayros/pose_of_human"));
   std::string activation_sub =  nh_.param("set_goal_activation_topic", std::string("/tay_ros/set_goal_activation"));
   pos_pub_ = nh_.advertise<move_base_msgs::MoveBaseGoal>(mov_publisher, 1);
   sub_activation_ =  nh_.subscribe<std_msgs::Int32>(activation_sub, 1, &SetGoal::callback, this);
@@ -83,9 +83,9 @@ SetGoal::get_dist_angle_tf()
     transform_made_ = false;
   }
 
-  if (buffer.canTransform("base_footprint", "object/0", ros::Time(0), ros::Duration(1), &error_))
+  if (buffer.canTransform("base_footprint", "bbx_to_3d_person", ros::Time(0), ros::Duration(1), &error_))
   {
-    bf2person_msg_ = buffer.lookupTransform("base_footprint", "object/0", ros::Time(0));
+    bf2person_msg_ = buffer.lookupTransform("base_footprint", "bbx_to_3d_person", ros::Time(0));
 
     tf2::fromMsg(bf2person_msg_, bf2person_);
 
@@ -104,7 +104,7 @@ SetGoal::get_dist_angle_tf()
 
   map2person_ = map2odom_ * odom2bf_ * bf2person_;
 
-  posX_ = map2person_.getOrigin().x()-1;
+  posX_ = map2person_.getOrigin().x();
   posY_ = map2person_.getOrigin().y();
   posZ_ = map2person_.getOrigin().z();
 
@@ -116,7 +116,7 @@ SetGoal::calculate_goal()
 {
   if (activation_ == GO)
   {
-   // get_dist_angle_tf();
+    get_dist_angle_tf();
     move_base_msgs::MoveBaseGoal goal;
 
     goal.target_pose.header.frame_id = "map";
@@ -137,7 +137,6 @@ SetGoal::calculate_goal()
 void
 SetGoal::callback(const std_msgs::Int32::ConstPtr& msg)
 {
-  ROS_INFO("Entro en bufeeeer");
   activation_ = msg->data;
 }
 
