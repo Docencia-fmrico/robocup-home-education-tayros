@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "taymsgs/person_data.h"
 #include "std_msgs/Int32.h"
+#include "dialog_cbs/dialog_cbs.h"
 
 
 namespace Back_home
@@ -30,9 +31,8 @@ Say_data::tick()
   comunicated_.data = true;
   
   data_ = getInput<taymsgs::person_data>("data").value();
-  std_msgs::Int32 a;
-  a.data = data_.zone;
-  ROS_INFO("Your name is %d\n", a.data);  
+  speaker_.sayPersonData(&data_);
+
   data_comunicated_pub_.publish(comunicated_);
   return BT::NodeStatus::SUCCESS;
 }  // namespace Back_home

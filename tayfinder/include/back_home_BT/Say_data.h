@@ -20,6 +20,7 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include "std_msgs/Bool.h"
 #include <string>
+#include "dialog_cbs/dialog_cbs.h"
 #include "ros/ros.h"
 #include "taymsgs/person_data.h"
 
@@ -44,6 +45,7 @@ class Say_data : public BT::ActionNodeBase
     ros::NodeHandle nh_;
     ros::Publisher data_comunicated_pub_;
 
+    gb_dialog::DialogManager speaker_;
     std_msgs::Bool comunicated_;
     taymsgs::person_data data_;
 };
