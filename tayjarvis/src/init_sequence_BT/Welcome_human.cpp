@@ -23,15 +23,19 @@ Welcome_human::halt()
 BT::NodeStatus
 Welcome_human::tick()
 {
-  gb_dialog::DialogManager speaker;
-  if (first_execute_)
+  if (speaker.startNav(3) == "true")
   {
-    speaker.welcomeHumanCML();
-    first_execute_ = false;
+    if (first_execute_)
+    {
+      speaker.welcomeHumanCML();
+      first_execute_ = false;
+    }
+      return BT::NodeStatus::SUCCESS;
   }
+
+  return BT::NodeStatus::FAILURE;
   
   
-  return BT::NodeStatus::SUCCESS;
 }  
 
 }  // namespace person_recognize

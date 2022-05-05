@@ -16,7 +16,7 @@
 #include <memory>
 
 #include "ros/ros.h"
-
+#include "dialog_cbs/dialog_cbs.h"
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include "behaviortree_cpp_v3/utils/shared_library.h"
@@ -92,7 +92,12 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(10);
 
-  int state = FIND_MATE;
+  int state = -1;
+  while (speaker.startNav(3) != "true")
+  {
+      
+  }
+  state = FIND_MATE;
   bool finish = false;
 
   /* Bt sequence */

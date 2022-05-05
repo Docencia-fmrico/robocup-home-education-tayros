@@ -55,6 +55,7 @@ BT::NodeStatus
 Localize_suitcase::tick()
 { 
   current_time_ = ros::Time::now().toSec();
+  ROS_INFO("Localizating suitcase......");
   if(current_time_ - waiting_time_ >= last_time_ || counter_ == 0)
   {
     if (counter_ < max_requests_)

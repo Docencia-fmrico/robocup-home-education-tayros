@@ -29,7 +29,7 @@ BT::NodeStatus
 Say_data::tick()
 {
   comunicated_.data = true;
-  
+  ROS_INFO("Saiying sata....");
   data_ = getInput<taymsgs::person_data>("data").value();
   speaker_.sayPersonData(&data_);
 
