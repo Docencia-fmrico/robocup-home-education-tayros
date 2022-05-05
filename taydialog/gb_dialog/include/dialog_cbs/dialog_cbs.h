@@ -18,6 +18,8 @@
 
 #include <gb_dialog/DialogInterface.h>
 #include <string>
+#include "std_msgs/Int32.h"
+
 
 namespace ph = std::placeholders;
 
@@ -30,6 +32,8 @@ public:
 
     void noIntentCB(dialogflow_ros_msgs::DialogflowResult result);
     void welcomeIntentCB(dialogflow_ros_msgs::DialogflowResult result);
+    void callback_activation(const std_msgs::Int32::ConstPtr& activator);
+
 
     void welcomeHumanCML();
     void welcomeHumanFMM();
@@ -54,7 +58,10 @@ public:
 private:
     ros::NodeHandle nh_;
     ros::Publisher name_pub_;
+    ros::Subscriber activation_sub_;
 
+    bool activation_;
+    bool name_restart_;
 
     std::string pointedBag_;
     std::string readyToMove_;

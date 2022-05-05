@@ -22,21 +22,24 @@ namespace tayPersonInfo
 
 PersonInfo::PersonInfo()
 {
-    person_info_sub_ =  nh_.subscribe<taymsgs::person_info>("/tayros/person_info", 10, &PersonInfo::callback_person_info, this);
-    person_color_sub_ =  nh_.subscribe<std_msgs::String>("/tayvision/person/color", 10, &PersonInfo::callback_person_color_info, this);
-    person_object_sub_ =  nh_.subscribe<std_msgs::String>("/tayvision/person/object_info", 10, &PersonInfo::callback_person_object_info, this);
+    person_info_sub_ =  nh_.subscribe<taymsgs::person_info>("/tayros/person_info", 1, &PersonInfo::callback_person_info, this);
+    person_color_sub_ =  nh_.subscribe<std_msgs::String>("/tayvision/person/color", 1, &PersonInfo::callback_person_color_info, this);
+    person_object_sub_ =  nh_.subscribe<std_msgs::String>("/tayvision/person/object_info", 1, &PersonInfo::callback_person_object_info, this);
     person_info_name_ = nh_.subscribe<std_msgs::String>("/taydialog/person/name", 1,  &PersonInfo::callback_person_name, this);
     person_feedback_pub_ = nh_.advertise<std_msgs::Int32>("/tayros/person/feedback", 1);
     color_activation_pub_ = nh_.advertise<std_msgs::Int32>("/tayvision/color/activation", 1);
     object_activation_pub_ = nh_.advertise<std_msgs::Int32>("/tayvision/object/activation", 1);
     name_activation_pub_ = nh_.advertise<std_msgs::Int32>("/taydialog/name/activation", 1);
 
-
     person_taked_ = false;
     person_color_taked = true;
     person_object_taked = true;
     name_taked_ = true;
     first_time_ = true;
+
+    for(int i = 0; i < PERSON_BUFFER; i++){
+        id_studied[i] = -1;
+    }
     
 }
 
@@ -45,10 +48,12 @@ PersonInfo::callback_person_info(const taymsgs::person_info::ConstPtr& person)
 {
     if(! person_taked_)
     {
-        current_person_.id = person->id;
-        current_person_.zone = person->zone;
-        current_person_.goal = person->position;
-        person_taked_ = true;
+        if(!is_id_studied(person->id)){
+            current_person_.id = person->id;
+            current_person_.zone = person->zone;
+            current_person_.goal = person->position;
+            person_taked_ = true;
+        }
     }
 }
 
@@ -103,6 +108,16 @@ PersonInfo::getPersonName()
     
 }
 
+bool
+PersonInfo::is_id_studied(int id){
+    for(int i = 0; i < PERSON_BUFFER; i++){
+        if(id_studied[i] == id){
+            return true;
+        }
+    }
+    return false;
+}
+
 void
 PersonInfo::step()
 {
@@ -154,6 +169,7 @@ PersonInfo::step()
 
             std_msgs::Int32 feedback_id;
             feedback_id.data = current_person_.id;
+            id_studied[current_person_.id] = current_person_.id;
             person_feedback_pub_.publish(feedback_id);
 
             std::cout << "Name: " << current_person_.name << std::endl;

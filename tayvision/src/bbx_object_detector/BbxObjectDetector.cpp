@@ -58,7 +58,7 @@ BbxObjectDetector::BbxObjectDetector()
 void 
 BbxObjectDetector::callback_activation(const std_msgs::Int32::ConstPtr& activator){
   activation_ = (bool)activator->data;
-
+  object_restart_= (bool)activator->data;
 }
 
 
@@ -71,7 +71,7 @@ void BbxObjectDetector::callback_bbx(const sensor_msgs::ImageConstPtr& image,
 
     try
     {
-        //img_ptr_depth = cv_bridge::toCvCopy(*image, sensor_msgs::image_encodings::TYPE_32FC1);
+        img_ptr_depth = cv_bridge::toCvCopy(*image, sensor_msgs::image_encodings::TYPE_32FC1);
     }
     catch (cv_bridge::Exception& e)
     {

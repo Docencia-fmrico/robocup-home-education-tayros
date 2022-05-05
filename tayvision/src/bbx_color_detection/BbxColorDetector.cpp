@@ -80,7 +80,7 @@ BbxColorDetector::BbxColorDetector():
 void 
 BbxColorDetector::callback_activation(const std_msgs::Int32::ConstPtr& activator){
   activation_ = (bool)activator->data;
-
+  restart_ = (bool)activator->data;
 }
 
 

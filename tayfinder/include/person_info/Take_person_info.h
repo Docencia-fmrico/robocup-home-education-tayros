@@ -25,6 +25,10 @@
 namespace tayPersonInfo
 {
 
+enum{
+    PERSON_BUFFER = 4,
+};
+
 typedef struct
 {
     std::string name;
@@ -47,6 +51,7 @@ public:
 
     bool getPersonName();
     void step();
+    bool is_id_studied(int id);
 
 private:
     ros::NodeHandle nh_;
@@ -59,7 +64,7 @@ private:
     ros::Publisher object_activation_pub_;
     ros::Publisher name_activation_pub_;
 
-
+    int id_studied[PERSON_BUFFER];
 
     t_personInfo current_person_;
 
