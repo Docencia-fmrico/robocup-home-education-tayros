@@ -18,9 +18,10 @@
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
 #include <move_base_msgs/MoveBaseAction.h>
-
+#include "std_msgs/Bool.h"
 #include <string>
-
+#include "taymsgs/person_data.h"
+#include "std_msgs/Int32.h"
 #include "ros/ros.h"
 
 namespace find_mate
@@ -37,11 +38,20 @@ class Get_mate_data : public BT::ActionNodeBase
 
     static BT::PortsList providedPorts()
     {
-      return { BT::OutputPort<int>("data")};
+      return { BT::OutputPort<taymsgs::person_data>("data")};
     }
 
   private:
     ros::NodeHandle nh_;
+    ros::Publisher mate_reached_pub_;
+    ros::Subscriber mate_data_sub_;
+
+    std_msgs::Bool reached_;
+    taymsgs::person_data data_;
+
+    bool data_received_;
+
+    void data_callback(const taymsgs::person_data::ConstPtr& msg);
 };
 
 }  // namespace find_mate

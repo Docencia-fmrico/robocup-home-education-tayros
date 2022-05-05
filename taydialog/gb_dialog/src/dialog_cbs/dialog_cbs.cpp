@@ -37,6 +37,7 @@
 /* Mantainer: Jonatan Gines jginesclavero@gmail.com */
 
 // MODIFIED BY 2022 TayRos. Rey Juan Carlos University, Software Robotics Eng.
+#include "taymsgs/person_data.h"
 #include <gb_dialog/DialogInterface.h>
 #include <dialog_cbs/dialog_cbs.h>
 #include <std_msgs/String.h>
@@ -286,6 +287,39 @@ std::string
 DialogManager::getPersonName()
 {
   return personName_;
+}
+
+
+void 
+getZone(int num, std::string* zone)
+{
+  if (num == 1)
+  {
+    *zone = "Cocina";
+  }
+}
+
+void
+DialogManager::sayPersonData(taymsgs::person_data *person_data)
+{
+  std::string person_name = "I founded " + person_data->name;
+  speak(person_name);
+  ros::Duration(4, 0).sleep();
+
+  std::string color_shirt = "The shirt is " + person_data->colorShirt;
+  speak(color_shirt);
+  ros::Duration(3, 0).sleep();
+
+  std::string object_in_hand = "In the hand ther is a " + person_data->object;
+  speak(object_in_hand);
+  ros::Duration(4, 0).sleep();
+
+  std::string *zone;
+  getZone(person_data->zone, zone);
+  std::string zone_sent = "He is in the " + *zone;
+  speak(zone_sent);
+  ros::Duration(3, 0).sleep();
+
 }
 
 } // namespace gb_dialog

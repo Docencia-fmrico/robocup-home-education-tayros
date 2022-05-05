@@ -23,7 +23,7 @@ Set_route::Set_route() : n_("~")
 
     currentX_ = 0;
     currentY_= 0;
-    first_msg_recived_ = false;
+    msg_recived_ = false;
 }
 
 void 
@@ -37,7 +37,7 @@ Set_route::fillPath(nav_msgs::GetPlan::Request &request)
     request.goal.header.frame_id = "map"; 
     request.goal.pose.position.x = targetX_; 
     request.goal.pose.position.y = targetY_; 
-    request.goal.pose.orientation.w = orientationW; 
+    request.goal.pose.orientation.w = DEFAULT_ORIENTATION_W; 
     request.tolerance = tolerance; 
 }
 
@@ -54,27 +54,25 @@ Set_route::makePlan()
         if (index != 0)
         {
             int array_pos = index-1-(index-1)*FACTOR;
-            //ROS_INFO("Longiuts = %ld", index);
+
+            ROS_INFO("Longitud array = %d, Array_pos = %d\n", index, array_pos);
             goal.target_pose.pose.position.x = new_goal.response.plan.poses[array_pos].pose.position.x;
             goal.target_pose.pose.position.y = new_goal.response.plan.poses[array_pos].pose.position.y;
-            //goal.target_pose.pose.orientation.x = 0;//new_goal.response.plan.poses[array_pos].pose.orientation.x;
-            //goal.target_pose.pose.orientation.y = 0;//new_goal.response.plan.poses[array_pos].pose.orientation.y;
-            //goal.target_pose.pose.orientation.z = 0;//new_goal.response.plan.poses[array_pos].pose.orientation.z;
-            goal.target_pose.pose.orientation.w = 1;//new_goal.response.plan.poses[array_pos].pose.orientation.w;
+            goal.target_pose.pose.orientation.x = new_goal.response.plan.poses[array_pos].pose.orientation.x;
+            goal.target_pose.pose.orientation.y = new_goal.response.plan.poses[array_pos].pose.orientation.y;
+            goal.target_pose.pose.orientation.z = new_goal.response.plan.poses[array_pos].pose.orientation.z;
+            goal.target_pose.pose.orientation.w = new_goal.response.plan.poses[array_pos].pose.orientation.w;
 
-            
-           // ROS_INFO("X final = %f", new_goal.response.plan.poses[array_pos].pose.position.x);
-           // ROS_INFO("Y final = %f", new_goal.response.plan.poses[array_pos].pose.position.y);
-            if (!first_msg_recived_)
+            if (msg_recived_)
             {
                 calculated_pos_pub_.publish(goal);
+                msg_recived_ = false;
             }
-            
         }
     }
     else
     {
-        //ROS_ERROR("Service failed");
+        ROS_ERROR("Service failed");
     }
 }
 
@@ -87,8 +85,7 @@ Set_route::human_pos_callback(const move_base_msgs::MoveBaseGoal::ConstPtr& targ
     orientationY = target->target_pose.pose.orientation.y;
     orientationZ = target->target_pose.pose.orientation.z;
     orientationW = target->target_pose.pose.orientation.w;
-    ROS_INFO("First calllllllllll");
-    first_msg_recived_ = true;
+    msg_recived_ = true;
 }
 
 void
@@ -96,7 +93,7 @@ Set_route::current_pos_callback(const geometry_msgs::PolygonStamped::ConstPtr& p
 {
     currentX_ = position->polygon.points[0].x;
     currentY_ = position->polygon.points[0].y;
-    //ROS_INFO("Pos x = %f, Pos Y = %f", currentX_, currentY_);
+    ROS_INFO("Pos x = %f, Pos Y = %f", currentX_, currentY_);
 }
 
 }

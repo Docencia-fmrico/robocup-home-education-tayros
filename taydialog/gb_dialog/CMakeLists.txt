@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   sound_play
   actionlib
   actionlib_msgs
+  taymsgs
 )
 
 catkin_package(

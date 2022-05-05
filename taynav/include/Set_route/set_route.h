@@ -28,7 +28,7 @@ namespace Route
         void current_pos_callback(const geometry_msgs::PolygonStamped::ConstPtr& position);
         void fillPath(nav_msgs::GetPlan::Request &request);
 
-        float FACTOR = 0.1;
+        float FACTOR = 0.25;
         float tolerance = 1;
 
         float targetX_;
@@ -39,7 +39,7 @@ namespace Route
         float orientationW;
         float DEFAULT_ORIENTATION_W = 1;
 
-        bool first_msg_recived_;
+        bool msg_recived_;
         float currentX_;
         float currentY_;
     };

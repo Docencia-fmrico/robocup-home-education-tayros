@@ -15,7 +15,7 @@
 #ifndef DIALOG_FSM_DIALOG_FSM_H
 #define DIALOG_FSM_DIALOG_FSM_H
 
-
+#include "taymsgs/person_data.h"
 #include <gb_dialog/DialogInterface.h>
 #include <string>
 #include "std_msgs/Int32.h"
@@ -46,6 +46,7 @@ public:
     void pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result);
     void startNavCB(dialogflow_ros_msgs::DialogflowResult result);
     void carReachedCB(dialogflow_ros_msgs::DialogflowResult result);
+    void sayPersonData(taymsgs::person_data *person_data);
 
     void end();
 
