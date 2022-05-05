@@ -1,0 +1,14 @@
+sub_sensor_path: /scan_filtered
+
+pub_vel_path: /mobile_base/commands/velocity
+pub_led_path: /mobile_base/commands/led1
+init_state: 0
+init_pressed: false
+init_direction: true
+linear_vel: 0.2
+angular_vel: 0.5
+led_control: true
+sound_control: false
+
+turning_time: 5.0
+backing_time: 3.0

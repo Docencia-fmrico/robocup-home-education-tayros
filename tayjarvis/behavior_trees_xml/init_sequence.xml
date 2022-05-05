@@ -1,0 +1,12 @@
+ <root main_tree_to_execute = "personRecognize" >
+     <BehaviorTree ID="personRecognize">
+
+        <Sequence name="root_sequence">
+            <Move name="move_to_arb" pos="{arb}"/>
+            
+            <Welcome_human name="Welcome_human"/>
+            <Localize_suitcase name="Localize_suitcase"/>
+        </Sequence>
+
+     </BehaviorTree>
+ </root>

@@ -1,0 +1,15 @@
+<launch>
+
+<!--Launch in a terminal lidar launcher-->
+<!--<include file="$(find taynav)/launch/navigation.launch"/>-->
+
+    <node pkg="fsm_bump_go" type="lidarBumpgo_node" name="lidarBuumpgp"> 
+        <rosparam command="load" file="$(find tayfinder)/param/searching_parameters.yaml"/>
+        <rosparam command="load" file="$(find tayfinder)/param/sensor_go.yaml"/>
+    </node>
+
+    <node pkg="tayfinder" type="find_my_mates" name="find_my_mates"> 
+        <rosparam command="load" file="$(find tayfinder)/param/searching_parameters.yaml"/>
+    </node>
+
+</launch>

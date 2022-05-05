@@ -1,0 +1,14 @@
+local_costmap:
+   global_frame: odom
+   robot_base_frame: /base_footprint
+   update_frequency: 5.0
+   publish_frequency: 5.0
+   static_map: false     # Si statica map es true rollong window deberia ser false
+   rolling_window: true  # Centra el mapa local al robot
+   width: 10.0 # 4
+   height: 10.0 # 4
+   resolution: 0.09     # Metros / célula
+   transform_tolerance: 0.5   # Segundos de time stamp que pueden pasar hasta que las tfs no sean validas
+   plugins:
+    - {name: obstacle_layer_local,      type: "costmap_2d::VoxelLayer"}
+    - {name: inflation_layer,     type: "costmap_2d::InflationLayer"}

@@ -1,0 +1,5 @@
+ <root main_tree_to_execute = "backHome" >
+     <BehaviorTree ID="backHome">
+        <Move name="goHome" pos="{Home}"/>  <!--Always true-->
+     </BehaviorTree>
+ </root>

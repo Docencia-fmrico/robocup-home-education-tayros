@@ -1,0 +1,12 @@
+<launch>
+
+	<include file="$(find darknet_ros)/launch/darknet_ros.launch">
+    <arg name="image"  value="/camera/rgb/image_raw"/>
+		<!-- "/usb_cam/image_raw" --> <!-- "/camera/rgb/image_raw" -->
+  </include>
+
+  <node 
+	pkg="tayvision" type="pointing_detector_node" name="Bbx_Pointing_Detection" output="screen">
+  </node>
+
+</launch>
