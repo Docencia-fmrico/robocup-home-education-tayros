@@ -33,7 +33,7 @@ target_reached::tick()
 {
   std_msgs::Int32 state;
   state.data = STOP;
- // act_pub_.publish(state);
+  
 
   if (first_execute == 0)
   {
@@ -44,6 +44,7 @@ target_reached::tick()
   ROS_INFO("Its target reached??");
   if (litsener.isCarReached() == "true")
   {
+      act_pub_.publish(state);
       return BT::NodeStatus::SUCCESS;
   }
   

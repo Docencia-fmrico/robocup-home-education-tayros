@@ -22,7 +22,7 @@
 #include "behaviortree_cpp_v3/utils/shared_library.h"
 #include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
 #include <move_base_msgs/MoveBaseAction.h>
-
+#include "dialog_cbs/dialog_cbs.h"
 #include "ros/package.h"
 
 enum
@@ -99,13 +99,14 @@ int main(int argc, char **argv)
   BT::Tree follow = factory.createTreeFromFile(follow_path, blackboard);
   BT::Tree back_home = factory.createTreeFromFile(back_home_path, blackboard);
   BT::Tree recognition = factory.createTreeFromFile(recognize_path, blackboard);
+  gb_dialog::DialogManager speaker;
   
   //auto publisher_zmq1 = std::make_shared<BT::PublisherZMQ>(follow, 10, 1666, 1667);
   /* Neccesary to use groot */
 
   ros::Rate loop_rate(10);
 
-  int state = FOLLOWING;
+  int state = RECOGNIZE;
   bool finish = false;
 
   /* Bt sequence */

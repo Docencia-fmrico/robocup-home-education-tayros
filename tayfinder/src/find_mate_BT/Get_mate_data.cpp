@@ -36,6 +36,7 @@ Get_mate_data::data_callback(const taymsgs::person_data::ConstPtr& msg)
 BT::NodeStatus
 Get_mate_data::tick()
 {
+  ROS_INFO("Get mate data..........");
   reached_.data = true;
   mate_reached_pub_.publish(reached_);
 
