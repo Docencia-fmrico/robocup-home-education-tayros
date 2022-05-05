@@ -50,20 +50,43 @@ PersonLocalizator::PersonLocalizator():
     person_info_pub_ = nh.advertise<taymsgs::person_info>("/tayros/person_info", 1);
     restart_person_status();
     
-    /* DEBUGGGGGGGGG
     zones[0].id = 1;
-    zones[0].minX = 0.1794237494468689;
-    zones[0].maxX = 2.13232159614563;
-    zones[0].minY = 7.347957611083984;
-    zones[0].maxY = 8.730541229248047;
-    */
+    zones[0].minX = -2.0834310054779053;
+    zones[0].maxX = 3.23098087310791;
+    zones[0].minY = -1.6;
+    zones[0].maxY = 9.095319747924805;
 
-    zones[0].id = 1;
-    zones[0].minX = -40.0;
-    zones[0].maxX = 40.0;
-    zones[0].minY = -40.0;
-    zones[0].maxY = 40.0;
+    zones[1].id = 2;
+    zones[1].minX = -2.0834310054779053;
+    zones[1].maxX = 3.23098087310791;
+    zones[1].minY = -1.6;
+    zones[1].maxY = 9.095319747924805;
 
+    zones[2].id = 3;
+    zones[2].minX = -2.0834310054779053;
+    zones[2].maxX = 3.23098087310791;
+    zones[2].minY = -1.6;
+    zones[2].maxY = 9.095319747924805;
+
+    zones[3].id = 4;
+    zones[3].minX = -2.0834310054779053;
+    zones[3].maxX = 3.23098087310791;
+    zones[3].minY = -1.6;
+    zones[3].maxY = 9.095319747924805;
+
+    zones[4].id = 5;
+    zones[4].minX = -2.0834310054779053;
+    zones[4].maxX = 3.23098087310791;
+    zones[4].minY = -1.6;
+    zones[4].maxY = 9.095319747924805;
+
+    zones[5].id = 6;
+    zones[5].minX = -2.0834310054779053;
+    zones[5].maxX = 3.23098087310791;
+    zones[5].minY = -1.6;
+    zones[5].maxY = 9.095319747924805;
+
+    /*
     zones[1].id = 2;
     zones[1].minX = -2.674506664276123;
     zones[1].maxX = -0.052829861640930176;
@@ -95,6 +118,7 @@ PersonLocalizator::PersonLocalizator():
     zones[5].maxX = 3.0820064544677734;
     zones[5].minY = 1.3447916507720947;
     zones[5].maxY = 2.8056538105010986;
+    */
 
   }
 
@@ -117,10 +141,12 @@ void PersonLocalizator::callback_bbx(const sensor_msgs::ImageConstPtr& image,
 	for (const auto & box : boxes->bounding_boxes){
 
 		PersonPoint3D current_person;
+    restart_person_data(current_person);
         
 		if (box.Class == detectedObject_ )
 		{
 			current_person = get_3d_map_point();
+      std::cout << current_person.x << current_person.y << current_person.y << std::endl;
 			int zone = get_zone(current_person);
 			if(zone == OUTSIDE){
 				return;
@@ -141,7 +167,7 @@ void PersonLocalizator::callback_bbx(const sensor_msgs::ImageConstPtr& image,
 
 			// DEBUG 
 			for(int i = 0; i < PERSON_BUFFER; i++){
-				if(is_saved(person_list[i])){
+				if(is_saved(person_list[i]) && person_list[i].status != EMPTY){
 					std::cout << "**********PERSON " << i << "DATA***************" << std::endl;
 					std::cout << "X: " << person_list[i].x << " Y: " << person_list[i].y << " Z: " << person_list[i].z << std::endl;
 					std::cout << "Roll: " << person_list[i].roll << " PITCH: " << person_list[i].pitch << " YAW: " << person_list[i].yaw << std::endl;
@@ -192,8 +218,28 @@ PersonLocalizator::restart_person_status(){
 
     for(int i = 0; i < PERSON_BUFFER; i++){
         person_list[i].status = EMPTY;
+        person_list[i].x= 100;
+        person_list[i].y = 100;
+        person_list[i].z = 100;
+        person_list[i].pitch= 100;
+        person_list[i].roll= 100;
+        person_list[i].yaw = 100;
+        person_list[i].zone = -1;
     }
     return;
+}
+
+void 
+PersonLocalizator::restart_person_data(PersonPoint3D point){
+
+  point.x = 100;
+  point.y = 100;
+  point.z = 100;
+  point.pitch = 100;
+  point.roll = 100;
+  point.yaw = 100;
+  point.zone = -1;
+  point.status = EMPTY;
 }
 
 bool 
@@ -205,7 +251,7 @@ PersonLocalizator::is_saved(PersonPoint3D point){
     for(int i = 0; i < PERSON_BUFFER; i++){
         x_diff = abs(point.x - person_list[i].x);
         y_diff = abs(point.y - person_list[i].y);
-        if(x_diff < PERSON_RANGE && y_diff < PERSON_RANGE && point.status != EMPTY){
+        if(x_diff < PERSON_RANGE && y_diff < PERSON_RANGE){
             return true;
         }
     }

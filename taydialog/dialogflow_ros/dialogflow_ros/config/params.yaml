@@ -1,7 +1,7 @@
 results_topic: "/dialogflow_client/results"
 requests_topic: "/dialogflow_client/requests"
 start_srv: "/dialogflow_client/start"
-project_id: "roscurso"
+project_id: "tay-lovo"
 play_audio: false
 use_audio_server: false
 server_name: "127.0.0.1"

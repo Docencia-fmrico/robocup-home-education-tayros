@@ -51,8 +51,8 @@ BbxObjectDetector::BbxObjectDetector()
 
     object_list[0] = "bottle";
     object_list[1] = "sports ball";
-    object_list[2] = "cell phone";
-    object_list[3] = "book";
+    //object_list[2] = "cell phone";
+    object_list[2] = "book";
   }
 
 void 

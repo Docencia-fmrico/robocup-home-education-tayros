@@ -15,6 +15,9 @@
 #include <ros/ros.h>
 #include "person_info/Take_person_info.h"
 #include "dialog_cbs/dialog_cbs.h"
+#include "taymsgs/person_data.h"
+#include "std_msgs/Bool.h"
+#include "std_msgs/Int32.h"
 #include <string>
 
 namespace tayPersonInfo
@@ -31,11 +34,20 @@ PersonInfo::PersonInfo()
     object_activation_pub_ = nh_.advertise<std_msgs::Int32>("/tayvision/object/activation", 1);
     name_activation_pub_ = nh_.advertise<std_msgs::Int32>("/taydialog/name/activation", 1);
 
+    person_goal_pub_ = nh_.advertise<move_base_msgs::MoveBaseGoal>("/tayfinder/person/goal", 1);
+    goal_reached_sub_ =  nh_.subscribe<std_msgs::Bool>("/tayfinder/mate_reached", 1,  &PersonInfo::callback_mate_reached, this);
+
+    person_data_pub_ = nh_.advertise<taymsgs::person_data>("/tayfinder/mate_data", 1);
+    data_comunicated_sub_ = nh_.subscribe<std_msgs::Bool>("/tayfinder/data_comunicated", 1,  &PersonInfo::callback_data_comunicated, this);
+
     person_taked_ = false;
     person_color_taked = true;
     person_object_taked = true;
     name_taked_ = true;
     first_time_ = true;
+
+    nav_succes_ = false;
+    say_data_succes_ = false;
 
     for(int i = 0; i < PERSON_BUFFER; i++){
         id_studied[i] = -1;
@@ -85,6 +97,16 @@ PersonInfo::callback_person_object_info(const std_msgs::String::ConstPtr& object
         current_person_.object = object->data;
         person_object_taked = true;
     }
+}
+
+void 
+PersonInfo::callback_mate_reached(const std_msgs::Bool::ConstPtr& reached){
+    nav_succes_ = reached->data;
+}
+
+void 
+PersonInfo::callback_data_comunicated(const std_msgs::Bool::ConstPtr& data_comunicated){
+    say_data_succes_ = data_comunicated->data;
 }
 
 
@@ -139,56 +161,72 @@ PersonInfo::step()
     if(person_taked_)
     {
         // Publicar goal 
+        person_goal_pub_.publish(current_person_.goal);
 
         // If goal succes 
+        if(nav_succes_){
 
-        // Activamos todos los nodos y el almacenamiento
-        if(first_time_){
-            person_color_taked = false;
-            person_object_taked = false;
-            name_taked_ = false;
+                // Activamos todos los nodos y el almacenamiento
+            if(first_time_){
+                init_take_info_time_ = ros::Time::now().toSec();
+                person_color_taked = false;
+                person_object_taked = false;
+                name_taked_ = false;
 
-            std_msgs::Int32 activation;
-            activation.data = 1;
-            color_activation_pub_.publish(activation);
-            object_activation_pub_.publish(activation);
-            name_activation_pub_.publish(activation);
-            first_time_ = false;
-        }
-        // ACTIVAR COLOR Y OBJECT
-       
-
-        if(person_color_taked && person_object_taked && name_taked_)
-        {   
-
-            std_msgs::Int32 activation;
-            activation.data = 0;
-            color_activation_pub_.publish(activation);
-            object_activation_pub_.publish(activation);
-            name_activation_pub_.publish(activation);
-
-            std_msgs::Int32 feedback_id;
-            feedback_id.data = current_person_.id;
-            id_studied[current_person_.id] = current_person_.id;
-            person_feedback_pub_.publish(feedback_id);
-
-            std::cout << "Name: " << current_person_.name << std::endl;
-            std::cout << "Color: " << current_person_.colorShirt << std::endl;
-            std::cout << "Object: " << current_person_.object << std::endl;
-            std::cout << "Zone: " << current_person_.zone << std::endl;
-            std::cout << "ID: " << current_person_.id << std::endl;
-
-            // Envias info a BT 
-
-            // Bt indica que ya ha comentado la info
-            sleep(5);
-            if(true)
-            {
-                person_taked_ = false;
-                first_time_ = true;
+                std_msgs::Int32 activation;
+                activation.data = 1;
+                color_activation_pub_.publish(activation);
+                object_activation_pub_.publish(activation);
+                name_activation_pub_.publish(activation);
+                first_time_ = false;
             }
-            
+            // ACTIVAR COLOR Y OBJECT
+        
+
+            if((person_color_taked && person_object_taked && name_taked_ )||(ros::Time::now().toSec() - init_take_info_time_) > MAX_TAKE_DATA_TIME )
+            {   
+
+                std_msgs::Int32 activation;
+                activation.data = 0;
+                color_activation_pub_.publish(activation);
+                object_activation_pub_.publish(activation);
+                name_activation_pub_.publish(activation);
+
+                std_msgs::Int32 feedback_id;
+                feedback_id.data = current_person_.id;
+                id_studied[current_person_.id] = current_person_.id;
+                person_feedback_pub_.publish(feedback_id);
+
+                std::cout << "Name: " << current_person_.name << std::endl;
+                std::cout << "Color: " << current_person_.colorShirt << std::endl;
+                std::cout << "Object: " << current_person_.object << std::endl;
+                std::cout << "Zone: " << current_person_.zone << std::endl;
+                std::cout << "ID: " << current_person_.id << std::endl;
+
+                // Envias info a BT 
+                taymsgs::person_data person_to_pub;
+                person_to_pub.colorShirt = current_person_.colorShirt;
+                person_to_pub.id = current_person_.id;
+                person_to_pub.name = current_person_.name;
+                person_to_pub.object = current_person_.object;
+                person_to_pub.zone = current_person_.zone;
+                person_data_pub_.publish(person_to_pub);
+
+                // Bt indica que ya ha comentado la info
+                if(say_data_succes_)
+                {
+                    person_taked_ = false;
+                    first_time_ = true;
+                    nav_succes_ = false;
+                    say_data_succes_ = false;
+                }
+                
+            }
+
+
         }
+
+        
 
 
     }

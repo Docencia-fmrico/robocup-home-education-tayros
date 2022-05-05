@@ -20,6 +20,7 @@
 #include "move_base_msgs/MoveBaseGoal.h"
 #include "taymsgs/person_info.h"
 #include "std_msgs/String.h"
+#include "std_msgs/Bool.h"
 #include "ros/ros.h"
 
 namespace tayPersonInfo
@@ -48,11 +49,12 @@ public:
     void callback_person_color_info(const std_msgs::String::ConstPtr& color);
     void callback_person_object_info(const std_msgs::String::ConstPtr& object);
     void callback_person_name(const std_msgs::String::ConstPtr& name);
+    void callback_mate_reached(const std_msgs::Bool::ConstPtr& reached);
+    void callback_data_comunicated(const std_msgs::Bool::ConstPtr& data_comunicated);
 
     bool getPersonName();
     void step();
     bool is_id_studied(int id);
-
 private:
     ros::NodeHandle nh_;
     ros::Subscriber person_info_sub_;
@@ -64,16 +66,27 @@ private:
     ros::Publisher object_activation_pub_;
     ros::Publisher name_activation_pub_;
 
+    ros::Publisher person_goal_pub_;
+    ros::Subscriber goal_reached_sub_;
+
+    ros::Publisher person_data_pub_;
+    ros::Subscriber data_comunicated_sub_;
+
     int id_studied[PERSON_BUFFER];
 
     t_personInfo current_person_;
 
     bool person_taked_;
     bool first_time_;
+    
+    const float MAX_TAKE_DATA_TIME = 60;
+    float init_take_info_time_;
 
     bool person_color_taked;
     bool person_object_taked;
     bool name_taked_;
+    bool nav_succes_;
+    bool say_data_succes_;
 };
 
 } // namespace tayPersonInfo

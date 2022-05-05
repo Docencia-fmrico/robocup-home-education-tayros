@@ -54,6 +54,9 @@ private:
 	message_filters::Subscriber<sensor_msgs::CameraInfo> cam_info_sub;
   message_filters::Synchronizer<MySyncPolicy_cam> sync_cam;
 
+  int px_;  // Center ground object value
+	int py_;
+  float distance_;
 
 	bool cam_info_taked;
   tf::TransformBroadcaster tfBroadcaster_;

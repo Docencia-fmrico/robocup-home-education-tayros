@@ -32,16 +32,18 @@ namespace tayfinder
 BbxsTo3D::BbxsTo3D()
 : nh(),
   workingFrameId_("base_footprint"),
-  ObjectFrameId_("bbx_person"),
+  ObjectFrameId_("bbx_to_3d_person"),
   detectedObject_("person"),
   image_depth_sub(nh, "/camera/depth/image_raw", 1),
-	cam_info_sub(nh, "/camera/depth/camera_info", 1),
   bbx_sub(nh, "/darknet_ros/bounding_boxes", 1),
+	cam_info_sub(nh, "/camera/depth/camera_info", 1),
   sync_bbx(MySyncPolicy_bbx(10), image_depth_sub, bbx_sub),
 	sync_cam(MySyncPolicy_cam(10), image_depth_sub, cam_info_sub)
   {
     sync_bbx.registerCallback(boost::bind(&BbxsTo3D::callback_bbx, this, _1, _2));
 		sync_cam.registerCallback(boost::bind(&BbxsTo3D::callback_cam_info, this, _1, _2));
+    px_ = -1;
+    py_ = -1;
   }
 
 void BbxsTo3D::callback_bbx(const sensor_msgs::ImageConstPtr& image,
@@ -55,53 +57,65 @@ void BbxsTo3D::callback_bbx(const sensor_msgs::ImageConstPtr& image,
   }
   catch (cv_bridge::Exception& e)
   {
-    ROS_ERROR("cv_bridge exception:  %s", e.what());
-    return;
+      ROS_ERROR("cv_bridge exception:  %s", e.what());
+      return;
   }
 
   for (const auto & box : boxes->bounding_boxes)
   {
+    int px = (box.xmax + box.xmin) / 2;
+    int py = (box.ymax + box.ymin) / 2;
+	float dist = img_ptr_depth->image.at<float>(cv::Point(px, py))* 0.001f;//* 0.001f; // * 0.001f
 
-    if (box.Class == detectedObject_  && cam_info_taked)
+    if (box.Class == detectedObject_ )
     {
-		int px = (box.xmax + box.xmin) / 2;
-		int py = (box.ymax + box.ymin) / 2;
-		float dist = img_ptr_depth->image.at<float>(cv::Point(px, py)* 0.001f); // * 0.001f
-
-		cv::Point2d pixel_point(px, py);
-		cv::Point3d xyz = cam_model_.projectPixelTo3dRay(pixel_point);
-		std::cout << "point (3D) = " << xyz << dist << std::endl << std::endl;
-
-		tf::StampedTransform transform;
-		transform.setOrigin(tf::Vector3(dist, -xyz.x, 0.0));
-		transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
-
-		transform.stamp_ = ros::Time::now();
-		transform.frame_id_ = workingFrameId_;
-		transform.child_frame_id_ = ObjectFrameId_; 
-
-		try
-		{
-			tfBroadcaster_.sendTransform(transform);
-		}
-		catch(tf::TransformException& ex)
-		{
-			ROS_ERROR_STREAM("Transform error of sensor data(BbxTo3D): " << ex.what() << ", quitting callback");
-			return;
-		}
-		}
-	}
+		ROS_INFO("%s%d%s%d\n", "PX: ",px, " PY: ", py);
+		px_ = px;
+		py_ = py;
+		distance_ = dist;
+  	}
+}
 }
 
 
 
-void BbxsTo3D::callback_cam_info(const sensor_msgs::ImageConstPtr& image, const sensor_msgs::CameraInfoConstPtr& cam_info){
 
-	if(!cam_info_taked){
-		ROS_INFO("CAM INIT");
+void BbxsTo3D::callback_cam_info(const sensor_msgs::ImageConstPtr& image, const sensor_msgs::CameraInfoConstPtr& cam_info)
+{
+	ROS_INFO("3D POINT");
+
+	// Allow the tf to death by inactivity
+	if(px_ >= 0 && py_ >= 0){
+
 		cam_model_.fromCameraInfo(cam_info);
-		cam_info_taked = true;
+		cv::Point2d pixel_point(px_, py_);
+
+		cv::Point3d xyz = cam_model_.projectPixelTo3dRay(pixel_point);
+		std::cout << "point (3D) = " << xyz << distance_ << std::endl << std::endl;
+		
+		tf::StampedTransform transform;
+		transform.setOrigin(tf::Vector3(distance_, -xyz.x, 0.0));
+		transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
+
+		transform.stamp_ = ros::Time::now();
+		transform.frame_id_ = workingFrameId_;
+		transform.child_frame_id_ = ObjectFrameId_;  
+
+		try
+			{
+				tfBroadcaster_.sendTransform(transform);
+			}
+			catch(tf::TransformException& ex)
+			{
+				ROS_ERROR_STREAM("Transform error of sensor data(BbxTo3D): " << ex.what() << ", quitting callback");
+				return;
+			}
 	}
+
+	// To elimite repeted data
+	px_ = -1;
+	py_ = -1;
+
 }
 
 

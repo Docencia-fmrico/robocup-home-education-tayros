@@ -22,8 +22,8 @@ Localize_suitcase::Localize_suitcase(const std::string& name,  const BT::NodeCon
   std::string bbx_reset = nh_.param("bbx_reset_topic", std::string("/tayros/bbx_reset"));
   
   /* Numeric params */
-  waiting_time_ = nh_.param("wait_pointing_time", double(6.0));
-  max_requests_ = nh_.param("max_pointing_requests", int(3));
+  waiting_time_ = nh_.param("wait_pointing_time", double(20.0));
+  max_requests_ = nh_.param("max_pointing_requests", int(5));
   turning_time_ = nh_.param("max_pointing_requests", int(2));
   turning_velocity_ =nh_.param("max_pointing_requests", float(0.7));
 
