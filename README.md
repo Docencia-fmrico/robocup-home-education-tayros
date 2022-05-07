@@ -94,6 +94,8 @@ We also store the objects we are interested in identifying in an array to avoid 
 <img width=600px src="https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayvision_object_final.gif" alt="explode"></a> 
 </div>
 
+[Full video](https://urjc-my.sharepoint.com/:v:/g/personal/i_porras_2020_alumnos_urjc_es/EbIAokzyXWZInRZJoARuCtYBl6tYq3upsSsw0M7zFiFrWg?e=E5G9vc)
+
 
 #### Shirt Color Detection
 
