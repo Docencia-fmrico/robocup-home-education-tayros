@@ -111,6 +111,27 @@ Each time a color is detected it increments it's **counter** until one of the co
 <img width=600px src="https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayvision_color2_final.gif" alt="explode"></a> 
 </div>
 
+[Red test video](https://urjc-my.sharepoint.com/:v:/g/personal/i_porras_2020_alumnos_urjc_es/ETQMMRqq01dNh-i0XtSzynQBU32ZuxIj9znTBoqM59iPOQ?e=lqTsdS)
+<br>
+[Black test video](https://urjc-my.sharepoint.com/:v:/g/personal/i_porras_2020_alumnos_urjc_es/ERk_PobuXgxNpW7QbYKhCrcBevCizvQp2AiF1eU8YG_l-w?e=80wOPM)
+
+
+
+### Person Localization
+
+To detect people and analyze the area where they are we use the **PersonLocalizator** node. This one is in charge of analyzing the detected people, **obtaining its 3D point** (leaning on the BbxsTo3D node), **the zone** in which this one is and storing each one of the people in a **buffer** to later publish these values to the navigation and to the node in charge of taking the information of each person.
+
+When this node finishes analyzing the subject, it will return a feedback through the topic **"/tayros/person/feedback"** so that it can change to the state of that person and stop publishing it.
+
+The published message is a custom message contained in the **taymsgs**(person_info.msg) package.
+
+**person_info.msg:**
+``` cpp
+move_base_msgs/MoveBaseGoal position
+
+int32 id
+int32 zone
+```
 
 
 
