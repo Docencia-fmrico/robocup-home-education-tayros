@@ -319,11 +319,44 @@ PersonInfo::callback_person_info(const taymsgs::person_info::ConstPtr& person)
 ```
 -----------------------------------------------------------------------
 
-Once the person has been studied, we send the info to the Behaviour Tree and, if the BT indicates that the info has been commented, we start again studying the information of the next person.                                                                            
+Once the person has been studied, we send the info to the Behaviour Tree and, if the BT indicates that the info has been commented, we start again studying the information of the next person.          
+
+### Logic and BT's
+We have two BT's, in the node wich runs the BT's we have a loop that doesn't start the execution of the program since the user doesn't say lets go or start.
+
+#### Find_mate
+<div align="center">
+<img width=600px src="https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayfinder_bt_find_mate.png?raw=true"  alt="explode"></a>
+</div>
+
+First, the robot moves to a position, then it starts executing bump and go, the other option was navigate to the point of each person. When the robots arrives to the first point. The robot starts searching the person. When the person is found the robot moves to him and starts getting his data.
+
+<div align="center">
+<img width=600px src="https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayfinder_comunications.png?raw=true"  alt="explode"></a>
+</div>
+Get mate data reports that the person localization is reached, the node take_person_info takes all the data and then returns it to get_mate_data
+
+#### Back_home
+<div align="center">
+<img width=600px src="https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tay_finder_back_home_BT.png?raw=true"  alt="explode"></a>
+</div>
+This back home ends when the robot moves to the refree position and comunicates him the data reccived with the custon msg person_data
+
+**person_data.msg:**
+``` cpp
+string name
+string colorShirt
+string object
+
+int32 zone
+int32 id
+
+move_base_msgs/MoveBaseGoal goal
+```
 
 ## Team
 <div align="center">
-<img width=600px src="https://github.com/Docencia-fmrico/bump-and-go-with-fsm-tayros/blob/main/resources/grupo.jpg?raw=true"  alt="explode"></a>
+<img width=400px src="https://github.com/Docencia-fmrico/bump-and-go-with-fsm-tayros/blob/main/resources/grupo.jpg?raw=true"  alt="explode"></a>
 </div>
 <h5 align="center">TayRos 2022</h5
   
