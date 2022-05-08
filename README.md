@@ -145,7 +145,39 @@ Here's an example:
 
 [Watch Video](https://urjc-my.sharepoint.com/:v:/g/personal/s_navajas_2020_alumnos_urjc_es/EbAaTYpAVj1Ciy6LYaGm734BkECcbkIjp5PRZkO88QG04w?e=psTG9n)
                                                                                                                                      
-                                                                                   
+
+### Logic and BT's
+
+The logic is divided in three behavior trees:
+
+#### Init sequence
+The first movements of the robot, first in welcome_human the robots waits a intstruction to start. Then, the robot go to the referee and then call the node Localize_suitcase.
+
+<div align="center">
+<img width=600px src="https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayjarvis_init_sequence_BT.png?raw=true" alt="explode"></a> 
+</div>
+
+Localize suitcase not only reports the activation of the pointing_detector_node but also restarts the bbx for more precision. Then pointing_detector_node returns the side that the referee pointed and turns the robot.
+
+#### Follow
+We managed two ways to follow a person. One was follow the person with navigation, the node needed to get the TF of the person, converse it into a Goal, calculate the route to the person with the service /move_base/make_plan and take the goal neareast to the person. The problem was that sometimes the robot loses the person, and that you have to point out the orientation of the robot, sometimes the orientation was wrong and the robot started to turn when it arrived to the point. 
+
+Finally we recycled the follow person code aun used it to follow the person.
+<div align="center">
+<img width=600px src="https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayjarvis_follow_bt.png?raw=true" alt="explode"></a> 
+</div>
+
+Conexions between nodes and BT:
+<div align="center">
+<img width=600px src="https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayjarvis_gtaphic.png?raw=true" alt="explode"></a> 
+</div>
+
+### Back_home
+This BT is only one node, but we implementd it to improve the modularity of the program.
+<div align="center">
+<img width=300px src="https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayjarvis_back_home_bt.png?raw=true"></a> 
+</div>
+
                                                                                    
 ## Task2: Find my mates  
 
@@ -251,7 +283,7 @@ typedef struct
     move_base_msgs::MoveBaseGoal goal;
 }t_personInfo;
 ```
------------------------------------------------------------------------
+------------------------------------------------https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayvision_object_final.gif-----------------------
 
 There's a number of different subscribers that gets the information of each person that are published in different topics by the corresponding dialog and perception nodes, and in each callback the information is store in the struct.
 **We also check if the person that is in front of the robot has been already studied:**
