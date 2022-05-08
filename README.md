@@ -75,7 +75,75 @@ For this tracking we also implemented the "BbxTo3D" node which received a bbx, i
 
 [Full video](https://urjc-my.sharepoint.com/:v:/g/personal/i_porras_2020_alumnos_urjc_es/ERh2wiJXTRJJlCKO51SO13YB9ZKmhjeo9cCi1EREfwXstQ?e=N9E1Kt)
 
+### Dialog
+We use **DialogFlow** to manage the robot dialog. Using the **intents** we manage all the different tasks of the dialog-part, as we show below.
+The dialog is divided in the listening part, as well as the speech part.
 
+The speech is implemented in the different methods and callbacks of **dialog_cbs**
+
+#### Listening node
+The dialog part has been implemented using, basically , a simple node (**dialog_cbs_node**) that listens in a ros ok loop.
+
+-----------------------------------------------------------------------
+Snippet(dialog_cbs_node):
+``` cpp
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "dialog_cbs_node");
+
+  gb_dialog::DialogManager forwarder;
+  ros::Duration(1, 0).sleep();
+
+  while(ros::ok())
+  {
+    forwarder.listen();
+
+    ros::spinOnce();
+  }
+  return 0;
+}
+```
+-----------------------------------------------------------------------
+#### Start phase
+In order to use the start-voice-command and start following the person after the luggage is selected/pointed, we created a DialogFlow intent that allowed us to detect voice-orders like "**start**" or "**lets go**". This same intent is also used in order to start the navigation part of **Carry My Luggage**.
+
+Here's a little example of how it works:
+
+[Watch Video](https://urjc-my.sharepoint.com/:v:/r/personal/s_navajas_2020_alumnos_urjc_es/Documents/robocup/start.mp4?csf=1&web=1&e=IrtLpD)
+
+#### Point Luggage Backup
+If, by any case, the pointed luggage is not detected using the bouding box, we ask the operator to say which luggage he wants to carry. The robot is able to detect:
+
+**- "The one/bag of your right/left"**
+
+**- "The one/bag of my right/left"**
+
+**- "right/left"**
+
+-----------------------------------------------------------------------
+Snippet(pointBagCB):
+``` cpp
+void
+DialogManager::pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result)
+{
+  ROS_INFO("[TAY_DIALOG] pointBagDialogCB:");
+  pointedBag_ = result.fulfillment_text;
+  questionAsked_ = true;
+  pointBag(2);
+}
+```
+-----------------------------------------------------------------------
+
+Here's an example of how it works:
+
+[Watch Video](https://urjc-my.sharepoint.com/:v:/r/personal/s_navajas_2020_alumnos_urjc_es/Documents/robocup/pointBag.mp4?csf=1&web=1&e=hhsSK3)
+
+#### Car reached
+The operator is able to say "**stop**" to the robot in order to tell him that he has arrived to the car.
+
+Here's an example:
+
+[Watch Video](https://urjc-my.sharepoint.com/:v:/r/personal/s_navajas_2020_alumnos_urjc_es/Documents/robocup/carreached.mp4?csf=1&web=1&e=RVayaX)
                                                                                                                                      
                                                                                    
                                                                                    
@@ -136,8 +204,90 @@ int32 zone
 ```
 
 
+### Dialog
+#### Ask for name
+In **Find My Mates Task**, the robot ask to each person his name. The robot is able to catch **any name the person says**. The person's name is published in a topic to allow the take_person_info_node to manage the information.
 
-                                                                                  
+-----------------------------------------------------------------------
+Snippet(askForNameCB):
+``` cpp
+  if(name_restart_){
+    personName_ = "none";
+  }
+  if(activation_){  
+    ROS_INFO("[TAY_DIALOG] askForNameCB:");
+    personName_ = result.fulfillment_text;
+    questionAsked_ = true;
+    std_msgs::String name;
+    name.data = personName_;
+    name_pub_.publish(name);
+    std::cout << "-------------------------------------------------" << std::endl;
+    std::cout << "[TAY_DIALOG] person name is: " << personName_ << std::endl;
+    std::cout << "-------------------------------------------------" << std::endl;
+  }
+```
+-----------------------------------------------------------------------
+Here's an example of how it works:
+
+[Watch Video](https://urjc-my.sharepoint.com/:v:/r/personal/s_navajas_2020_alumnos_urjc_es/Documents/robocup/Name.mp4?csf=1&web=1&e=UE22gT)
+
+### Take person info
+Once the robot is in front of the person, the **take_person_info_node** proceeds to take and manage all the information he receives from the perception and dialog. In order to do it, we use **a buffer and a custom struct** with the person info:
+
+-----------------------------------------------------------------------
+Snippet(Take_person_info):
+``` cpp
+enum{
+    PERSON_BUFFER = 4,
+};
+
+typedef struct
+{
+    std::string name;
+    std::string colorShirt;
+    std::string object;
+    int zone;
+    int id;
+    move_base_msgs::MoveBaseGoal goal;
+}t_personInfo;
+```
+-----------------------------------------------------------------------
+
+There's a number of different subscribers that gets the information of each person that are published in different topics by the corresponding dialog and perception nodes, and in each callback the information is store in the struct.
+**We also check if the person that is in front of the robot has been already studied:**
+
+-----------------------------------------------------------------------
+Snippet(Take_person_info):
+``` cpp
+bool
+PersonInfo::is_id_studied(int id){
+    for(int i = 0; i < PERSON_BUFFER; i++){
+        if(id_studied[i] == id){
+            return true;
+        }
+    }
+    return false;
+}
+
+...
+
+void
+PersonInfo::callback_person_info(const taymsgs::person_info::ConstPtr& person)
+{
+    if(! person_taked_)
+    {
+        if(!is_id_studied(person->id)){
+            current_person_.id = person->id;
+            current_person_.zone = person->zone;
+            current_person_.goal = person->position;
+            person_taked_ = true;
+        }
+    }
+}
+```
+-----------------------------------------------------------------------
+
+Once the person has been studied, we send the info to the Behaviour Tree and, if the BT indicates that the info has been commented, we start again studying the information of the next person.                                                                            
 
 ## Team
 <div align="center">
