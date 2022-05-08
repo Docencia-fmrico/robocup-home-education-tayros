@@ -109,7 +109,7 @@ In order to use the start-voice-command and start following the person after the
 
 Here's a little example of how it works:
 
-[Watch Video](https://urjc-my.sharepoint.com/:v:/r/personal/s_navajas_2020_alumnos_urjc_es/Documents/robocup/start.mp4?csf=1&web=1&e=IrtLpD)
+[Watch Video](https://urjc-my.sharepoint.com/:v:/g/personal/s_navajas_2020_alumnos_urjc_es/EfXy9xZWqBdDkQvSHqq4n7YBEB_ZMpmM5TfZ10RLvdQZJg?e=Ifaj1i)
 
 #### Point Luggage Backup
 If, by any case, the pointed luggage is not detected using the bouding box, we ask the operator to say which luggage he wants to carry. The robot is able to detect:
@@ -136,14 +136,14 @@ DialogManager::pointBagDialogCB(dialogflow_ros_msgs::DialogflowResult result)
 
 Here's an example of how it works:
 
-[Watch Video](https://urjc-my.sharepoint.com/:v:/r/personal/s_navajas_2020_alumnos_urjc_es/Documents/robocup/pointBag.mp4?csf=1&web=1&e=hhsSK3)
+[Watch Video](https://urjc-my.sharepoint.com/:v:/g/personal/s_navajas_2020_alumnos_urjc_es/ERwDE949KWFIsIsD1d_kJAEB8Ia2zTsl5uB1exj90tpOeQ?e=dgozmg)
 
 #### Car reached
 The operator is able to say "**stop**" to the robot in order to tell him that he has arrived to the car.
 
 Here's an example:
 
-[Watch Video](https://urjc-my.sharepoint.com/:v:/r/personal/s_navajas_2020_alumnos_urjc_es/Documents/robocup/carreached.mp4?csf=1&web=1&e=RVayaX)
+[Watch Video](https://urjc-my.sharepoint.com/:v:/g/personal/s_navajas_2020_alumnos_urjc_es/EbAaTYpAVj1Ciy6LYaGm734BkECcbkIjp5PRZkO88QG04w?e=psTG9n)
                                                                                                                                      
                                                                                    
                                                                                    
@@ -229,7 +229,7 @@ Snippet(askForNameCB):
 -----------------------------------------------------------------------
 Here's an example of how it works:
 
-[Watch Video](https://urjc-my.sharepoint.com/:v:/r/personal/s_navajas_2020_alumnos_urjc_es/Documents/robocup/Name.mp4?csf=1&web=1&e=UE22gT)
+[Watch Video](https://urjc-my.sharepoint.com/:v:/g/personal/s_navajas_2020_alumnos_urjc_es/ETFEzV_zr01FjGr57YY7O0QBEx9jQhGVmbUjDpZmj8KA-A?e=dgkZXz)
 
 ### Take person info
 Once the robot is in front of the person, the **take_person_info_node** proceeds to take and manage all the information he receives from the perception and dialog. In order to do it, we use **a buffer and a custom struct** with the person info:
