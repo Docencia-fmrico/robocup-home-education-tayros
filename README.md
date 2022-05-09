@@ -283,7 +283,7 @@ typedef struct
     move_base_msgs::MoveBaseGoal goal;
 }t_personInfo;
 ```
-------------------------------------------------https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayvision_object_final.gif-----------------------
+-----------------------------------------------------------------------
 
 There's a number of different subscribers that gets the information of each person that are published in different topics by the corresponding dialog and perception nodes, and in each callback the information is store in the struct.
 **We also check if the person that is in front of the robot has been already studied:**
