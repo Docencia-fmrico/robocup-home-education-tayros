@@ -172,6 +172,47 @@ Conexions between nodes and BT:
 <img width=600px src="https://github.com/Docencia-fmrico/robocup-home-education-tayros/blob/readme/resources/figures/tayjarvis_gtaphic.png?raw=true" alt="explode"></a> 
 </div>
 
+##### Service subscriptor
+-----------------------------------------------------------------------
+Snippet(pointBagCB):
+``` cpp
+void
+Set_route::makePlan()
+{
+    nav_msgs::GetPlan new_goal;
+    move_base_msgs::MoveBaseGoal goal;
+    fillPath(new_goal.request);
+
+    if (route_client_.call(new_goal))
+    {
+        long index = size(new_goal.response.plan.poses);
+        if (index != 0)
+        {
+            int array_pos = index-1-(index-1)*FACTOR;
+
+            ROS_INFO("Longitud array = %d, Array_pos = %d\n", index, array_pos);
+            goal.target_pose.pose.position.x = new_goal.response.plan.poses[array_pos].pose.position.x;
+            goal.target_pose.pose.position.y = new_goal.response.plan.poses[array_pos].pose.position.y;
+            goal.target_pose.pose.orientation.x = new_goal.response.plan.poses[array_pos].pose.orientation.x;
+            goal.target_pose.pose.orientation.y = new_goal.response.plan.poses[array_pos].pose.orientation.y;
+            goal.target_pose.pose.orientation.z = new_goal.response.plan.poses[array_pos].pose.orientation.z;
+            goal.target_pose.pose.orientation.w = new_goal.response.plan.poses[array_pos].pose.orientation.w;
+
+            if (msg_recived_)
+            {
+                calculated_pos_pub_.publish(goal);
+                msg_recived_ = false;
+            }
+        }
+    }
+    else
+    {
+        ROS_ERROR("Service failed");
+    }
+}
+```
+-----------------------------------------------------------------------
+
 ### Back_home
 This BT is only one node, but we implementd it to improve the modularity of the program.
 <div align="center">
