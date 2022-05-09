@@ -395,6 +395,8 @@ int32 id
 move_base_msgs/MoveBaseGoal goal
 ```
 
+[Person data comunication](https://urjc-my.sharepoint.com/:v:/g/personal/a_madinabeitia_2020_alumnos_urjc_es/EW2uSR1eOq5Eu0Oz9HqLOTgBxQtxIWvI7Eu6-TtE_0q1wQ?e=5m2BeD)
+
 ## Team
 <div align="center">
 <img width=400px src="https://github.com/Docencia-fmrico/bump-and-go-with-fsm-tayros/blob/main/resources/grupo.jpg?raw=true"  alt="explode"></a>
